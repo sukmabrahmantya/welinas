@@ -40,27 +40,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-base: #101828;
-    --surface-card: #1f2937;
-    --border-color: #334155;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5f5;
-    --background: var(--background-base);
-    --foreground: var(--text-primary);
-    --primary: #1e293b;
-    --brand-gold: #d9b15f;
-    --accent-teal: #1ba5a5;
-    --accent-coral: #f97362;
-    --background: #f5f3f0;
-    --surface: #ffffff;
-    --border: #d4d4d8;
-    --text-primary: #111827;
-    --text-secondary: #6b7280;
-  }
-}
-
 body {
   background-color: var(--background-base);
   color: var(--text-primary);
