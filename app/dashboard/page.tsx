@@ -1,19 +1,13 @@
 "use client";
 
-import { Button } from "@/components/Button";
 import { PUISI } from "@/data/puisi";
 import { DASHBOARD_MENUS } from "@/lib/dashboard/menus";
 import { ChevronLeft, ChevronRight, ChevronsDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const menus = ["Quiz", "History", "Sastra"];
-
 export default function DashboardPage() {
-  const pathname = usePathname();
-
   const [poemIndex, setPoemIndex] = useState(0);
   const [showScrollHint, setShowScrollHint] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -80,7 +74,7 @@ export default function DashboardPage() {
                 <Link
                   key={menu.href}
                   href={menu.href}
-                  className="bg-brand-gold text-primary w-full rounded-2xl border border-[#D4D4D8]/60 py-4 text-lg font-semibold text-center transition shadow-sm hover:bg-brand-gold/80"
+                  className="bg-white text-primary w-full rounded-2xl border border-brand-gold py-4 text-lg font-semibold text-center transition shadow-sm hover:bg-brand-gold/80"
                 >
                   {menu.label}
                 </Link>
@@ -138,7 +132,7 @@ export default function DashboardPage() {
                   <div
                     ref={scrollRef}
                     onScroll={handlePoemScroll}
-                    className="flex-1 space-y-2 text-base sm:text-lg lg:text-xl leading-relaxed font-[var(--literary-font)] max-h-58 overflow-y-auto pr-2"
+                    className="flex-1 space-y-2 text-base sm:text-lg lg:text-xl leading-relaxed font-[var(--literary-font)] max-h-58 overflow-y-auto"
                   >
                     {poem.lines.map((line, index) => (
                       <p key={line + index}>{line}</p>
