@@ -85,9 +85,10 @@ export default function Home() {
 
             {/* CTA Button */}
             <div className="pt-4">
-              <button
-                onClick={() => router.push("/login")}
-                className="
+              <div className="flex flex-col md:flex-row gap-3">
+                <button
+                  onClick={() => router.push("/login")}
+                  className="
                   group inline-flex items-center gap-3
                   px-8 py-4 cursor-pointer
                   bg-[#1E293B] text-white
@@ -97,10 +98,26 @@ export default function Home() {
                   transition-all duration-300
                   hover:scale-105
                 "
-              >
-                <span className="text-lg">Mulai Menjelajah</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
+                >
+                  <span className="text-lg">Mulai Menjelajah</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+                <button
+                  onClick={() => router.push("/dashboard")}
+                  className="
+                  group inline-flex items-center gap-3
+                  px-8 py-4 cursor-pointer
+                  bg-secondary text-white
+                  rounded-2xl
+                  shadow-lg shadow-[#1E293B]/20
+                  hover:bg-[#1E293B]/90 hover:shadow-xl hover:shadow-[#1E293B]/30
+                  transition-all duration-300
+                  hover:scale-105
+                "
+                >
+                  <span className="text-sm">Dashboard (Testing Mode)</span>
+                </button>
+              </div>
 
               <p className="text-sm text-[#6B7280] mt-4">
                 Gratis untuk semua pengguna
