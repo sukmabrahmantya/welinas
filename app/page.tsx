@@ -1,5 +1,7 @@
 "use client";
 
+import GlitchText from "@/components/GlitchText";
+import TextType from "@/components/TextType";
 import { ArrowRight, BookOpen, Sparkles, Users } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -18,7 +20,7 @@ export default function Home() {
       <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-8rem)]">
           {/* Left Column - Content */}
-          <div className="space-y-8 lg:space-y-10 order-2 lg:order-1">
+          <div className="space-y-8 lg:space-y-8 order-2 lg:order-1">
             {/* Logo & Brand */}
             <div className="space-y-4">
               <div className="inline-flex items-center gap-3 px-5 py-2 bg-white rounded-full shadow-sm border border-[#1E293B]/10">
@@ -28,16 +30,30 @@ export default function Home() {
                 </span>
               </div>
 
-              <h1 className="text-5xl lg:text-6xl xl:text-7xl text-[#1E293B] leading-tight">
+              <GlitchText
+                speed={1}
+                enableShadows={true}
+                enableOnHover={true}
+                className="text-5xl lg:text-6xl xl:text-8xl custom-class leading-tight"
+              >
                 Welinas.
-              </h1>
+              </GlitchText>
             </div>
 
             {/* Tagline */}
             <div className="space-y-4">
-              <h2 className="text-2xl lg:text-3xl text-[#1E293B]/90">
-                Platform Literasi & Sastra untuk Semua
-              </h2>
+              <TextType
+                text={[
+                  "Platform literasi & sastra untuk semua",
+                  "Baca, pahami, dan maknai setiap kata",
+                  "Dari pemula sampai pecinta sastra",
+                ]}
+                typingSpeed={75}
+                pauseDuration={1500}
+                showCursor={true}
+                cursorCharacter="|"
+                className="text-2xl lg:text-3xl text-[#1E293B]/90"
+              />
               <p className="text-lg lg:text-xl text-[#6B7280] leading-relaxed max-w-xl">
                 Jelajahi, baca, dan bagikan karya sastra dari berbagai genre.
                 Temukan inspirasi dalam setiap kata.
