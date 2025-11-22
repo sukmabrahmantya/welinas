@@ -5,6 +5,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -18,6 +19,28 @@ type QuizProgress = {
 
 type QuizSessionMap = Record<string, QuizProgress>;
 
+type QuizGameSession = {
+  currentQuestionIndex: number;
+  hp: number;
+  maxHp: number;
+  score: number;
+  completed: boolean;
+};
+
+const defaultProgress: QuizProgress = {
+  currentQuestionIndex: 0,
+  answers: {},
+  completed: false,
+};
+
+const defaultGameSession: QuizGameSession = {
+  currentQuestionIndex: 0,
+  hp: 3,
+  maxHp: 3,
+  score: 0,
+  completed: false,
+};
+
 type QuizSessionContextValue = {
   getProgress: (key: string) => QuizProgress;
   setCurrentQuestionIndex: (key: string, index: number) => void;
@@ -26,39 +49,46 @@ type QuizSessionContextValue = {
   setLevelCompleted: (key: string, completed: boolean) => void;
   isLevelCompleted: (key: string) => boolean;
   resetSession: (key: string) => void;
+  initializeGameSession: (key: string, initial?: Partial<QuizGameSession>) => void;
+  getGameSession: (key: string) => QuizGameSession;
+  updateGameSession: (
+    key: string,
+    updater: (prev: QuizGameSession) => QuizGameSession,
+  ) => void;
+  resetGameSession: (key: string) => void;
 };
 
 const QuizSessionContext = createContext<QuizSessionContextValue | null>(null);
 
-const defaultProgress: QuizProgress = {
-  currentQuestionIndex: 0,
-  answers: {},
-  completed: false,
-};
-
 export function QuizSessionProvider({ children }: { children: ReactNode }) {
   const [sessionMap, setSessionMap] = useState<QuizSessionMap>({});
+  const [gameSessions, setGameSessions] = useState<
+    Record<string, QuizGameSession>
+  >({});
 
   const getProgress = useCallback(
     (key: string): QuizProgress => {
       return sessionMap[key] ?? { ...defaultProgress };
     },
-    [sessionMap]
+    [sessionMap],
   );
 
-  const setCurrentQuestionIndex = useCallback((key: string, index: number) => {
-    setSessionMap((prev) => {
-      const progress = prev[key] ?? { ...defaultProgress };
-      return {
-        ...prev,
-        [key]: {
-          ...progress,
-          currentQuestionIndex: index,
-          lastResult: undefined,
-        },
-      };
-    });
-  }, []);
+  const setCurrentQuestionIndex = useCallback(
+    (key: string, index: number) => {
+      setSessionMap((prev) => {
+        const progress = prev[key] ?? { ...defaultProgress };
+        return {
+          ...prev,
+          [key]: {
+            ...progress,
+            currentQuestionIndex: index,
+            lastResult: undefined,
+          },
+        };
+      });
+    },
+    [],
+  );
 
   const setAnswer = useCallback(
     (key: string, questionId: string, value: string) => {
@@ -76,24 +106,21 @@ export function QuizSessionProvider({ children }: { children: ReactNode }) {
         };
       });
     },
-    []
+    [],
   );
 
-  const setLastResult = useCallback(
-    (key: string, result?: "correct" | "wrong") => {
-      setSessionMap((prev) => {
-        const progress = prev[key] ?? { ...defaultProgress };
-        return {
-          ...prev,
-          [key]: {
-            ...progress,
-            lastResult: result,
-          },
-        };
-      });
-    },
-    []
-  );
+  const setLastResult = useCallback((key: string, result?: "correct" | "wrong") => {
+    setSessionMap((prev) => {
+      const progress = prev[key] ?? { ...defaultProgress };
+      return {
+        ...prev,
+        [key]: {
+          ...progress,
+          lastResult: result,
+        },
+      };
+    });
+  }, []);
 
   const setLevelCompleted = useCallback((key: string, completed: boolean) => {
     setSessionMap((prev) => {
@@ -115,11 +142,57 @@ export function QuizSessionProvider({ children }: { children: ReactNode }) {
     (key: string) => {
       return sessionMap[key]?.completed === true;
     },
-    [sessionMap]
+    [sessionMap],
   );
 
   const resetSession = useCallback((key: string) => {
     setSessionMap((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }, []);
+
+  const initializeGameSession = useCallback(
+    (key: string, initial?: Partial<QuizGameSession>) => {
+      setGameSessions((prev) => {
+        if (prev[key]) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [key]: {
+            ...defaultGameSession,
+            ...initial,
+          },
+        };
+      });
+    },
+    [],
+  );
+
+  const getGameSession = useCallback(
+    (key: string): QuizGameSession => {
+      return gameSessions[key] ?? { ...defaultGameSession };
+    },
+    [gameSessions],
+  );
+
+  const updateGameSession = useCallback(
+    (key: string, updater: (prev: QuizGameSession) => QuizGameSession) => {
+      setGameSessions((prev) => {
+        const current = prev[key] ?? { ...defaultGameSession };
+        return {
+          ...prev,
+          [key]: updater(current),
+        };
+      });
+    },
+    [],
+  );
+
+  const resetGameSession = useCallback((key: string) => {
+    setGameSessions((prev) => {
       const next = { ...prev };
       delete next[key];
       return next;
@@ -135,6 +208,10 @@ export function QuizSessionProvider({ children }: { children: ReactNode }) {
       setLevelCompleted,
       isLevelCompleted,
       resetSession,
+      initializeGameSession,
+      getGameSession,
+      updateGameSession,
+      resetGameSession,
     }),
     [
       getProgress,
@@ -144,7 +221,11 @@ export function QuizSessionProvider({ children }: { children: ReactNode }) {
       setLevelCompleted,
       isLevelCompleted,
       resetSession,
-    ]
+      initializeGameSession,
+      getGameSession,
+      updateGameSession,
+      resetGameSession,
+    ],
   );
 
   return (
@@ -177,5 +258,43 @@ export function useQuizSession(key: string) {
       context.setLevelCompleted(key, completed),
     isLevelCompleted,
     resetSession: () => context.resetSession(key),
+  };
+}
+
+export function useQuizGameSession(
+  key: string,
+  options?: { maxHp?: number },
+) {
+  const context = useContext(QuizSessionContext);
+
+  if (!context) {
+    throw new Error("useQuizGameSession must be used within QuizSessionProvider");
+  }
+
+  const desiredHp = options?.maxHp ?? defaultGameSession.maxHp;
+
+  useEffect(() => {
+    context.initializeGameSession(key, {
+      maxHp: desiredHp,
+      hp: desiredHp,
+    });
+  }, [context, key, desiredHp]);
+
+  const progress = context.getGameSession(key);
+
+  return {
+    progress,
+    updateSession: useCallback(
+      (updater: (prev: QuizGameSession) => QuizGameSession) =>
+        context.updateGameSession(key, updater),
+      [context, key],
+    ),
+    resetGame: useCallback(() => {
+      context.resetGameSession(key);
+      context.initializeGameSession(key, {
+        maxHp: desiredHp,
+        hp: desiredHp,
+      });
+    }, [context, key, desiredHp]),
   };
 }
