@@ -14,12 +14,11 @@ const modes = [
   },
   {
     slug: "game",
-    title: "Mode Game",
+    title: "Mode Game · Shooting",
     description:
-      "Segera hadir! Versi gim dengan skor dan HP sehingga setiap jawaban menentukan kemenanganmu.",
+      "Mainkan Shooting Game dengan HP dan skor. Soal acak dan tempo cepat akan menguji fokusmu.",
     icon: Gamepad2,
-    href: "#",
-    disabled: true,
+    href: "/dashboard/quiz/game",
   },
 ];
 
@@ -34,8 +33,8 @@ export default function QuizHomePage() {
           Pilih Mode Latihanmu
         </h1>
         <p className="text-[#475569] max-w-3xl mx-auto">
-          Mulai dari mode belajar untuk memahami materi satu per satu. Mode Game
-          akan hadir berikutnya dengan sistem skor dan HP.
+          Pilih Mode Belajar untuk mendalami materi per level atau coba Mode Game
+          bertempo cepat dengan HP dan skor.
         </p>
       </div>
 
@@ -43,11 +42,7 @@ export default function QuizHomePage() {
         {modes.map((mode) => {
           const Icon = mode.icon;
           const content = (
-            <div
-              className={`h-full rounded-3xl border border-[#E4E4ED] p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-xl ${
-                mode.disabled ? "opacity-60 cursor-not-allowed" : ""
-              } bg-white`}
-            >
+            <div className="h-full rounded-3xl border border-[#E4E4ED] p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-xl bg-white">
               <div className="flex items-center gap-4">
                 <div className="rounded-2xl bg-[#1E293B]/10 p-4 text-[#1E293B]">
                   <Icon className="h-8 w-8" />
@@ -62,21 +57,11 @@ export default function QuizHomePage() {
               <p className="mt-6 text-[#475569] leading-relaxed">
                 {mode.description}
               </p>
-              {!mode.disabled && (
-                <span className="mt-8 inline-flex items-center text-[#1BA5A5] font-semibold">
-                  Mulai sekarang →
-                </span>
-              )}
+              <span className="mt-8 inline-flex items-center text-[#1BA5A5] font-semibold">
+                Mulai sekarang →
+              </span>
             </div>
           );
-
-          if (mode.disabled) {
-            return (
-              <div key={mode.slug} className="h-full">
-                {content}
-              </div>
-            );
-          }
 
           return (
             <Link key={mode.slug} href={mode.href} className="block h-full">
