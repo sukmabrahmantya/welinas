@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Target, Zap } from "lucide-react";
 
 import { QUIZ_MATERIALS } from "@/data/quiz";
+import TrueFocus from "@/components/TrueFocus";
 
 export default function QuizGameListPage() {
   return (
@@ -13,9 +14,14 @@ export default function QuizGameListPage() {
           <p className="text-xs uppercase tracking-[0.3em] text-[#6B7280]">
             Mode Game · Shooting
           </p>
-          <h1 className="text-4xl font-semibold text-[#1E293B]">
-            Pilih Arena Tantangan
-          </h1>
+          <TrueFocus
+            sentence="Pilih Arena Tantangan"
+            manualMode={false}
+            blurAmount={3}
+            borderColor="black"
+            animationDuration={2}
+            pauseBetweenAnimations={1}
+          />
           <p className="text-[#475569] max-w-3xl mx-auto">
             Setiap materi memiliki 50 soal acak lintas level. Jawab cepat,
             kumpulkan poin, dan jaga HP agar tidak habis.
