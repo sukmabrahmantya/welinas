@@ -92,7 +92,7 @@ export default function DashboardPage() {
           </aside>
 
           <main className="flex-1 overflow-y-auto bg-white rounded-2xl sm:rounded-[28px] lg:rounded-[32px] border border-[#E4E4ED] p-6 sm:p-8 lg:p-12 flex flex-col gap-4 sm:gap-6">
-            <div className="flex flex-col gap-3 flex-row items-center justify-between">
+            <div className="flex items-center justify-between">
               <span className="self-start px-4 py-1.5 rounded-full bg-[#F0F2F8] text-[#1E293B] text-xs sm:text-sm font-medium">
                 Puisi minggu ini
               </span>
