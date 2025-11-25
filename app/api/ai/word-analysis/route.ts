@@ -1,0 +1,90 @@
+import { NextRequest, NextResponse } from "next/server";
+import { callAiChat } from "@/lib/ai/llmClient";
+import type { WordAnalysis } from "@/types/wordAnalysis";
+
+export async function POST(req: NextRequest) {
+  try {
+    const { word, language = "id" } = (await req.json()) as {
+      word?: string;
+      language?: "id" | "en";
+    };
+
+    if (!word || typeof word !== "string") {
+      return NextResponse.json(
+        { error: "Field 'word' wajib diisi." },
+        { status: 400 }
+      );
+    }
+
+    const prompt = `
+      Kamu adalah asisten linguistik bahasa Indonesia untuk platform literasi digital bernama Welinas.
+
+      Analisis kata/frasa berikut secara ringkas, jelas, dan akurat.
+      Kata: "${word}"
+
+      Bahasa: ${
+        language === "id"
+          ? "Bahasa Indonesia"
+          : "English (but answer in Bahasa Indonesia)"
+      }
+
+      Kembalikan HASIL dalam format JSON PENUH **tanpa penjelasan tambahan** dengan struktur persis seperti ini:
+
+      {
+        "asalUsul": "asal usul kata, sejarah singkat, dari bahasa apa, dan bagaimana berkembang (3–6 kalimat)",
+        "fungsiDanKelasKata": "jelaskan kelas kata (verba, nomina, adjektiva, dsb.) dan fungsi umum kata ini dalam kalimat (2–4 kalimat)",
+        "penggunaanDalamKonteks": "jelaskan konteks umum penggunaan kata ini: formal/tidak formal, sastra/sehari-hari, nuansa emosional, dsb. (3–5 kalimat)",
+        "contohKalimat": [
+          "contoh kalimat 1 menggunakan kata tersebut dalam konteks yang natural",
+          "contoh kalimat 2",
+          "contoh kalimat 3"
+        ],
+        "makna": "makna inti/utama kata dalam 1–2 kalimat",
+        "penjelasanSingkat": "ringkasan 2–3 kalimat yang mengikat makna dan nuansa penggunaan kata",
+        "ejaKata": "tuliskan ejaan suku kata jika relevan, misalnya: hu·jan bu·lan ju·ni",
+        "sinonim": [
+          "sinonim 1 (jika ada)",
+          "sinonim 2"
+        ],
+        "antonim": [
+          "antonim 1 (jika ada)",
+          "antonim 2"
+        ]
+      }
+
+      Pastikan:
+      - Semua nilai berupa string (kecuali array).
+      - Semua teks dalam Bahasa Indonesia.
+      - Jika tidak ada sinonim/antonim yang tepat, gunakan array kosong [].
+    `;
+
+    const data = await callAiChat<WordAnalysis>({
+      messages: [
+        {
+          role: "system",
+          content:
+            "Kamu adalah asisten linguistik bahasa Indonesia untuk platform belajar bernama Welinas. Jawab dengan rapi dan akurat.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      responseFormat: "json_object",
+      temperature: 0.3,
+      maxTokens: 1024,
+    });
+
+    return NextResponse.json(data);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Word analysis error:", error);
+    } else {
+      console.error("Word analysis error:", String(error));
+    }
+    return NextResponse.json(
+      { error: "Gagal menganalisis kata." },
+      { status: 500 }
+    );
+  }
+}

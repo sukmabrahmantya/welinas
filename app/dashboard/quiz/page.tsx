@@ -25,16 +25,16 @@ const modes = [
 export default function QuizHomePage() {
   return (
     <div className="flex h-full flex-col gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full lg:h-[calc(100vh-4rem)]">
-      <div className="space-y-2 text-center">
+      <div className="space-y-3 text-center">
         <p className="text-sm uppercase tracking-widest text-[#6B7280]">
           Welinas Quiz Center
         </p>
-        <h1 className="text-4xl font-semibold text-[#1E293B]">
+        <h1 className="text-3xl sm:text-4xl font-semibold text-[#1E293B]">
           Pilih Mode Latihanmu
         </h1>
-        <p className="text-[#475569] max-w-3xl mx-auto">
-          Pilih Mode Belajar untuk mendalami materi per level atau coba Mode Game
-          bertempo cepat dengan HP dan skor.
+        <p className="text-sm sm:text-base text-[#6B7280] max-w-3xl mx-auto">
+          Pilih Mode Belajar untuk mendalami materi per level atau coba Mode
+          Game bertempo cepat dengan HP dan skor.
         </p>
       </div>
 
