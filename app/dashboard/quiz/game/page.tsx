@@ -11,7 +11,7 @@ export default function QuizGameListPage() {
     <div className="min-h-screen bg-[#F5F3F0] py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
         <div className="flex flex-col gap-3 text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-[#6B7280]">
+          <p className="text-sm uppercase tracking-widest text-[#6B7280]">
             Mode Game · Shooting
           </p>
           <TrueFocus
@@ -22,7 +22,7 @@ export default function QuizGameListPage() {
             animationDuration={2}
             pauseBetweenAnimations={1}
           />
-          <p className="text-[#475569] max-w-3xl mx-auto">
+          <p className="text-sm sm:text-base text-[#6B7280] max-w-3xl mx-auto">
             Setiap materi memiliki 50 soal acak lintas level. Jawab cepat,
             kumpulkan poin, dan jaga HP agar tidak habis.
           </p>

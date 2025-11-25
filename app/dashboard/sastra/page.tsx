@@ -22,7 +22,7 @@ export default function SastraPage() {
   return (
     <div className="flex h-full flex-col gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
       <div className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6B7280]">
+        <p className="text-sm uppercase tracking-widest text-[#6B7280]">
           Ruang Sastra Welinas
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold text-[#1E293B]">
