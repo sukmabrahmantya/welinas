@@ -65,89 +65,91 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex h-full flex-col gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full lg:h-[calc(100vh-4rem)]">
-      <div className=" w-full h-auto  overflow-visible lg:overflow-hidden flex flex-col gap-4 sm:gap-6">
-        <div className="flex h-full flex-col gap-4 lg:flex-row lg:gap-6">
-          <aside className="w-full lg:w-72 shrink-0 flex flex-col items-start gap-3">
-            {DASHBOARD_MENUS.map((menu) => (
-              <Link
-                key={menu.href}
-                href={menu.href}
-                className="bg-white text-primary w-full rounded-2xl border border-brand-gold py-4 text-lg font-semibold text-center transition shadow-sm hover:bg-brand-gold/80"
-              >
-                {menu.label}
-              </Link>
-            ))}
-
-            <div className="overflow-hidden rounded-3xl shadow-lg border border-primary/20 mt-4 sm:mt-auto bg-brand-gold/5">
-              <Image
-                src="/images/character-3.png"
-                alt="Ilustrasi pembaca Welinas"
-                width={540}
-                height={540}
-                className="mx-auto w-full max-w-xs lg:max-w-xl object-contain"
-                priority
-              />
-            </div>
-          </aside>
-
-          <main className="flex-1 overflow-y-auto bg-white rounded-2xl sm:rounded-[28px] lg:rounded-[32px] border border-[#E4E4ED] p-6 sm:p-8 lg:p-12 flex flex-col gap-4 sm:gap-6">
-            <div className="flex items-center justify-between">
-              <span className="self-start px-4 py-1.5 rounded-full bg-[#F0F2F8] text-[#1E293B] text-xs sm:text-sm font-medium">
-                Puisi minggu ini
-              </span>
-
-              <div className="flex items-center gap-2 sm:gap-3 text-[#1E293B]">
-                <button
-                  onClick={handlePrev}
-                  disabled={!canGoPrev}
-                  className="h-9 w-9 sm:h-11 sm:w-11 rounded-full border border-[#D4D4D8] flex items-center justify-center hover:bg-[#F5F3F0] transition disabled:opacity-30"
-                  aria-label="Puisi sebelumnya"
+    <div className="flex h-full flex-col gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
+      <div className="flex-1 min-h-0">
+        <div className="w-full h-auto lg:h-[calc(100vh-4.5rem-5rem)] overflow-visible lg:overflow-hidden">
+          <div className="flex h-full flex-col gap-4 lg:flex-row lg:gap-6">
+            <aside className="w-full lg:w-72 shrink-0 flex flex-col items-start gap-3">
+              {DASHBOARD_MENUS.map((menu) => (
+                <Link
+                  key={menu.href}
+                  href={menu.href}
+                  className="bg-white text-primary w-full rounded-2xl border border-brand-gold py-4 text-lg font-semibold text-center transition shadow-sm hover:bg-brand-gold/80"
                 >
-                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-                <button
-                  onClick={handleNext}
-                  disabled={!canGoNext}
-                  className="h-9 w-9 sm:h-11 sm:w-11 rounded-full border border-[#D4D4D8] flex items-center justify-center hover:bg-[#F5F3F0] transition disabled:opacity-30"
-                  aria-label="Puisi selanjutnya"
-                >
-                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
+                  {menu.label}
+                </Link>
+              ))}
+
+              <div className="overflow-hidden rounded-3xl shadow-lg border border-primary/20 mt-4 sm:mt-auto bg-brand-gold/5">
+                <Image
+                  src="/images/character-3.png"
+                  alt="Ilustrasi pembaca Welinas"
+                  width={540}
+                  height={540}
+                  className="mx-auto w-full max-w-xs lg:max-w-xl object-contain"
+                  priority
+                />
               </div>
-            </div>
+            </aside>
 
-            <article className="flex-1 flex flex-col text-center space-y-3 sm:space-y-4">
-              <div>
-                <h2 className="font-semibold text-2xl sm:text-3xl lg:text-4xl text-[#1E293B]">
-                  {poem.title}
-                </h2>
-                <p className="text-xs sm:text-sm text-[#6B7280] italic mt-1 sm:mt-2">
-                  (karya {poem.author})
-                </p>
+            <main className="flex-1 bg-white rounded-2xl sm:rounded-[28px] lg:rounded-[32px] border border-[#E4E4ED] p-6 sm:p-8 lg:p-12 flex flex-col gap-4 sm:gap-6 min-h-0">
+              <div className="flex items-center justify-between shrink-0">
+                <span className="self-start px-4 py-1.5 rounded-full bg-[#F0F2F8] text-[#1E293B] text-xs sm:text-sm font-medium">
+                  Puisi minggu ini
+                </span>
+
+                <div className="flex items-center gap-2 sm:gap-3 text-[#1E293B]">
+                  <button
+                    onClick={handlePrev}
+                    disabled={!canGoPrev}
+                    className="h-9 w-9 sm:h-11 sm:w-11 rounded-full border border-[#D4D4D8] flex items-center justify-center hover:bg-[#F5F3F0] transition disabled:opacity-30"
+                    aria-label="Puisi sebelumnya"
+                  >
+                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    disabled={!canGoNext}
+                    className="h-9 w-9 sm:h-11 sm:w-11 rounded-full border border-[#D4D4D8] flex items-center justify-center hover:bg-[#F5F3F0] transition disabled:opacity-30"
+                    aria-label="Puisi selanjutnya"
+                  >
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                </div>
               </div>
 
-              <div className="relative mt-3 sm:mt-4 flex-1">
-                <div
-                  ref={scrollRef}
-                  onScroll={handlePoemScroll}
-                  className="flex-1 space-y-2 text-base sm:text-lg lg:text-xl leading-relaxed font-[var(--literary-font)] max-h-58 overflow-y-auto"
-                >
-                  {poem.lines.map((line, index) => (
-                    <p key={line + index}>{line}</p>
-                  ))}
+              <article className="flex-1 flex flex-col text-center space-y-3 sm:space-y-4 min-h-0">
+                <div className="shrink-0">
+                  <h2 className="font-semibold text-2xl sm:text-3xl lg:text-4xl text-[#1E293B]">
+                    {poem.title}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#6B7280] italic mt-1 sm:mt-2">
+                    (karya {poem.author})
+                  </p>
                 </div>
 
-                {showScrollHint && (
-                  <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center md:bottom-2 md:justify-end md:pr-10">
-                    <div className="rounded-full shadow-2xl border border-[#D4D4D8] bg-brand-gold/5 animate-bounce p-2">
-                      <ChevronsDown className="w-5 h-5 sm:w-6 sm:h-6 text-[#111827] opacity-50" />
-                    </div>
+                <div className="relative mt-3 sm:mt-4 flex-1 min-h-0 overflow-hidden">
+                  <div
+                    ref={scrollRef}
+                    onScroll={handlePoemScroll}
+                    className="h-full max-h-full overflow-y-auto space-y-2 text-base sm:text-lg lg:text-xl leading-relaxed font-[var(--literary-font)]"
+                  >
+                    {poem.lines.map((line, index) => (
+                      <p key={line + index}>{line}</p>
+                    ))}
                   </div>
-                )}
-              </div>
-            </article>
-          </main>
+
+                  {showScrollHint && (
+                    <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center md:bottom-2 md:justify-end md:pr-10">
+                      <div className="rounded-full shadow-2xl border border-[#D4D4D8] bg-brand-gold/5 animate-bounce p-2">
+                        <ChevronsDown className="w-5 h-5 sm:w-6 sm:h-6 text-[#111827] opacity-50" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </article>
+            </main>
+          </div>
         </div>
       </div>
     </div>
