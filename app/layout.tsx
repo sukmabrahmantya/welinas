@@ -28,8 +28,9 @@ const merriweather = Merriweather({
 });
 
 export const metadata: Metadata = {
-  title: "Welinas",
-  description: "Platform Literasi & Sastra untuk Semua",
+  title: "Welinas: Platform Literasi Digital",
+  description:
+    "Jelajahi, baca, dan bagikan karya sastra dari berbagai genre. Temukan inspirasi dalam setiap kata.",
 };
 
 export default function RootLayout({
