@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callAiChat } from "@/lib/ai/llmClient";
 import type { WordAnalysis } from "@/types/wordAnalysis";
+import { callOpenAiChat } from "@/lib/ai/llmClient";
+
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,7 +27,7 @@ export async function POST(req: NextRequest) {
       Bahasa: ${
         language === "id"
           ? "Bahasa Indonesia"
-          : "English (but answer in Bahasa Indonesia)"
+          : "English (tapi JAWAB tetap dalam Bahasa Indonesia)"
       }
 
       Kembalikan HASIL dalam format JSON PENUH **tanpa penjelasan tambahan** dengan struktur persis seperti ini:
@@ -58,12 +60,12 @@ export async function POST(req: NextRequest) {
       - Jika tidak ada sinonim/antonim yang tepat, gunakan array kosong [].
     `;
 
-    const data = await callAiChat<WordAnalysis>({
+    const data = await callOpenAiChat<WordAnalysis>({
       messages: [
         {
           role: "system",
           content:
-            "Kamu adalah asisten linguistik bahasa Indonesia untuk platform belajar bernama Welinas. Jawab dengan rapi dan akurat.",
+            "Kamu adalah asisten linguistik bahasa Indonesia untuk platform belajar bernama Welinas. Jawab dengan rapi, akurat, dan dalam Bahasa Indonesia.",
         },
         {
           role: "user",
@@ -77,13 +79,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(data);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Word analysis error:", error);
-    } else {
-      console.error("Word analysis error:", String(error));
-    }
+    const err = error instanceof Error ? error : new Error(String(error));
+    console.error("Word analysis error:", err);
+
     return NextResponse.json(
-      { error: "Gagal menganalisis kata." },
+      { error: "Gagal menganalisis kata dengan OpenAI." },
       { status: 500 }
     );
   }

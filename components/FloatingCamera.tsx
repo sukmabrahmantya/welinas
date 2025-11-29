@@ -8,22 +8,27 @@ export function FloatingCameraAction() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
+  const navigate = (mode: "upload" | "camera") => {
+    setIsOpen(false);
+    router.push(`/dashboard/capture?mode=${mode}`);
+  };
+
   return (
     <>
       <div className="fixed bottom-6 right-6 flex flex-col items-end gap-3">
         {isOpen && (
           <div className="bg-white rounded-2xl shadow-2xl border border-[#D4D4D8] p-4 w-56 space-y-3 menu-fade">
             <button
-              onClick={() => {
-                setIsOpen(false);
-                router.push("/dashboard/capture");
-              }}
+              onClick={() => navigate("upload")}
               className="w-full flex items-center gap-3 rounded-xl border border-[#D4D4D8] px-4 py-3 text-left text-[#1E293B] hover:bg-[#F5F3F0] transition"
             >
               <UploadCloud className="h-5 w-5 text-[#1BA5A5]" />
               <span className="text-sm font-medium">Upload Image</span>
             </button>
-            <button className="w-full flex items-center gap-3 rounded-xl border border-[#D4D4D8] px-4 py-3 text-left text-[#1E293B] hover:bg-[#F5F3F0] transition">
+            <button
+              onClick={() => navigate("camera")}
+              className="w-full flex items-center gap-3 rounded-xl border border-[#D4D4D8] px-4 py-3 text-left text-[#1E293B] hover:bg-[#F5F3F0] transition"
+            >
               <ImageUp className="h-5 w-5 text-[#F97362]" />
               <span className="text-sm font-medium">Ambil Gambar</span>
             </button>

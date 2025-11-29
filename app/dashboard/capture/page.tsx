@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { Loader2, Sparkles, UploadCloud, X } from "lucide-react";
-import { useOcrClean } from "@/hooks/useOcrClean";
+import { useSearchParams } from "next/navigation";
+import type Webcam from "react-webcam";
+import { Loader2, Sparkles, UploadCloud } from "lucide-react";
 import { useWordAnalysis } from "@/hooks/useWordAnalysis";
 import { useAiOcrImage } from "@/hooks/useAiOcrImage";
 import { WordAnalysisModal } from "./WordAnalysisModal";
+import { WebcamModal } from "./WebcamModal";
 
 const LEFT_TOPICS = [
   {
@@ -65,7 +67,7 @@ function formatEjaKata(ejaKata?: string | null): string {
   return ejaKata
     .split("·")
     .map((part) => part.trim())
-    .join("  •  "); // ⬅️ dua spasi kiri-kanan
+    .join("  •  ");
 }
 
 type ActivePanel =
@@ -73,26 +75,90 @@ type ActivePanel =
   | { type: "detail"; key: string };
 
 export default function CapturePage() {
+  const searchParams = useSearchParams();
+  const modeParam = searchParams.get("mode");
+  const isCameraMode = modeParam === "camera";
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const webcamRef = useRef<Webcam | null>(null);
+
   const [isDragging, setIsDragging] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [ocrText, setOcrText] = useState<string | null>(null);
   const [cleanedText, setCleanedText] = useState<string | null>(null);
-  const [ocrProgress, setOcrProgress] = useState(0);
   const [ocrError, setOcrError] = useState<string | null>(null);
+
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [activePanel, setActivePanel] = useState<ActivePanel>({
     type: "topic",
     key: LEFT_TOPICS[0].key,
   });
-  const [ocrEngine, setOcrEngine] = useState<"tesseract" | "ai">("tesseract");
 
-  const {
-    mutateAsync: cleanOcrText,
-    isPending: isCleaning,
-    error: cleanError,
-  } = useOcrClean();
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
+  const [pendingCapture, setPendingCapture] = useState<string | null>(null);
+
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState<
+    string | undefined
+  >();
+
+  const loadDevices = useCallback(async () => {
+    try {
+      if (!navigator.mediaDevices?.enumerateDevices) return;
+      const mediaDevices = await navigator.mediaDevices.enumerateDevices();
+      const videoInputs = mediaDevices.filter((d) => d.kind === "videoinput");
+      setDevices(videoInputs);
+
+      if (!selectedDeviceId && videoInputs.length > 0) {
+        const preferred =
+          videoInputs.find((d) => d.label.toLowerCase().includes("usb")) ||
+          videoInputs.find(
+            (d) => !d.label.toLowerCase().includes("integrated")
+          ) ||
+          videoInputs[0];
+
+        setSelectedDeviceId(preferred.deviceId);
+      }
+    } catch (err) {
+      console.error("Failed to enumerate devices", err);
+    }
+  }, [selectedDeviceId]);
+
+  useEffect(() => {
+    if (!isCameraModalOpen) return;
+
+    navigator.mediaDevices
+      ?.getUserMedia({ video: true })
+      .then((stream) => {
+        stream.getTracks().forEach((t) => t.stop());
+        return loadDevices();
+      })
+      .catch((err) => {
+        console.error("getUserMedia error", err);
+        setCameraError(
+          "Tidak dapat mengakses kamera. Izinkan akses kamera di browser lalu coba lagi."
+        );
+      });
+  }, [isCameraModalOpen, loadDevices]);
+
+  const videoConstraints = useMemo(
+    () =>
+      selectedDeviceId
+        ? {
+            deviceId: { exact: selectedDeviceId },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          }
+        : {
+            facingMode: "user" as const,
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          },
+    [selectedDeviceId]
+  );
 
   const {
     data: wordAnalysis,
@@ -100,130 +166,33 @@ export default function CapturePage() {
     error: wordError,
   } = useWordAnalysis(selectedWord);
 
-  const {
-    mutateAsync: runAiOcrMutation,
-    isPending: isAiOcrPending,
-    error: aiOcrError,
-  } = useAiOcrImage();
+  const { mutateAsync: runAiOcrMutation, error: aiOcrError } = useAiOcrImage();
 
   useEffect(() => {
     return () => {
-      if (previewUrl) {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
         URL.revokeObjectURL(previewUrl);
       }
     };
   }, [previewUrl]);
 
-  const preprocessImage = async (file: File): Promise<Blob> => {
-    const bitmap = await createImageBitmap(file);
-
-    // scale up kalau terlalu kecil
-    const minHeight = 1000; // boleh kamu tweak
-    const scale = bitmap.height < minHeight ? minHeight / bitmap.height : 1;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.floor(bitmap.width * scale);
-    canvas.height = Math.floor(bitmap.height * scale);
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("Canvas context unavailable");
-
-    // sedikit tingkatkan kontras & brightness
-    ctx.filter = "contrast(1.2) brightness(1.05)";
-    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-
-    // opsional: convert ke grayscale tanpa threshold
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-      const r = data[i];
-      const g = data[i + 1];
-      const b = data[i + 2];
-      const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-      data[i] = data[i + 1] = data[i + 2] = gray;
-    }
-    ctx.putImageData(imageData, 0, 0);
-
-    return await new Promise<Blob>((resolve, reject) => {
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) return reject(new Error("Failed to preprocess image"));
-          resolve(blob);
-        },
-        "image/png",
-        1
-      );
-    });
-  };
-
-  const runTesseractOcr = async (file: File) => {
-    setIsProcessing(true);
+  useEffect(() => {
+    setPreviewUrl(null);
     setOcrText(null);
     setCleanedText(null);
     setOcrError(null);
-    setOcrProgress(0);
-
-    try {
-      const { default: Tesseract } = await import("tesseract.js");
-      const processedBlob = await preprocessImage(file);
-      // const result = await Tesseract.recognize(file, "ind+eng", {
-      const options = {
-        logger: (message: { status?: string; progress?: number }) => {
-          if (message.status === "recognizing text") {
-            setOcrProgress(message.progress ?? 0);
-          }
-        },
-        // paksa mode blok teks kolom tunggal
-        tessedit_pageseg_mode: (
-          Tesseract as unknown as { PSM?: { SINGLE_COLUMN?: number } }
-        ).PSM?.SINGLE_COLUMN,
-        user_defined_dpi: "300",
-        preserve_interword_spaces: "1",
-      } as Parameters<typeof Tesseract.recognize>[2];
-
-      const result = await Tesseract.recognize(processedBlob, "ind", options);
-
-      const extracted = result.data.text?.trim();
-      if (!extracted) {
-        setOcrError("Kami tidak menemukan teks pada gambar ini.");
-        setOcrText(null);
-        setCleanedText(null);
-        return;
-      }
-
-      setOcrText(extracted);
-      setIsProcessing(false);
-
-      try {
-        const { cleanedText } = await cleanOcrText(extracted);
-        setCleanedText(cleanedText || extracted);
-      } catch (err) {
-        console.error("Clean OCR error:", err);
-        // fallback: pakai raw
-        setCleanedText(extracted);
-      }
-    } catch (error) {
-      console.error("OCR error:", error);
-      setOcrError(
-        "Terjadi kendala saat membaca teks. Pastikan koneksi dan format gambar sesuai."
-      );
-      setOcrText(null);
-      setCleanedText(null);
-    } finally {
-      setIsProcessing(false);
-      setOcrProgress(0);
-    }
-  };
+    setSelectedWord(null);
+    setCameraError(null);
+    setPendingCapture(null);
+  }, [isCameraMode]);
 
   const runAiOcr = async (file: File) => {
     setIsProcessing(true);
     setOcrText(null);
     setCleanedText(null);
     setOcrError(null);
-    setOcrProgress(0); // progress manual, karena AI nggak kirim progress
 
     try {
-      // 🔥 panggil API AI OCR via React Query hook
       const { text } = await runAiOcrMutation(file);
 
       if (!text?.trim()) {
@@ -233,15 +202,10 @@ export default function CapturePage() {
         return;
       }
 
-      setOcrText(text.trim());
-
-      try {
-        const { cleanedText } = await cleanOcrText(text.trim());
-        setCleanedText(cleanedText || text.trim());
-      } catch (err) {
-        console.error("Clean OCR error:", err);
-        setCleanedText(text.trim());
-      }
+      const raw = text.trim();
+      // langsung pakai hasil AI
+      setOcrText(raw);
+      setCleanedText(raw);
     } catch (error) {
       console.error("AI OCR error:", error);
       setOcrError(
@@ -253,7 +217,6 @@ export default function CapturePage() {
       setCleanedText(null);
     } finally {
       setIsProcessing(false);
-      setOcrProgress(0);
     }
   };
 
@@ -268,12 +231,7 @@ export default function CapturePage() {
     const reader = new FileReader();
     reader.onload = () => {
       setPreviewUrl(reader.result as string);
-
-      if (ocrEngine === "ai") {
-        void runAiOcr(file);
-      } else {
-        runTesseractOcr(file);
-      }
+      void runAiOcr(file);
     };
     reader.onerror = () => {
       setPreviewUrl(null);
@@ -286,6 +244,61 @@ export default function CapturePage() {
     event.preventDefault();
     setIsDragging(false);
     handleFiles(event.dataTransfer.files);
+  };
+
+  const handleRetake = () => {
+    setPreviewUrl(null);
+    setOcrText(null);
+    setCleanedText(null);
+    setOcrError(null);
+    setSelectedWord(null);
+    setCameraError(null);
+    setPendingCapture(null);
+  };
+
+  const previewSection = previewUrl ? (
+    <div className="space-y-4 ">
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-sm font-semibold text-[#1E293B]">Pratinjau Gambar</p>
+        <button
+          type="button"
+          onClick={handleRetake}
+          className="text-[#F97362] hover:underline text-sm cursor-pointer"
+        >
+          Hapus
+        </button>
+      </div>
+      <div className="relative overflow-hidden rounded-xl border border-[#E4E4ED] bg-[#0f172a]/60">
+        <Image
+          src={previewUrl}
+          alt="Preview"
+          width={800}
+          height={600}
+          className="w-full h-auto object-contain bg-black/40"
+        />
+      </div>
+    </div>
+  ) : null;
+
+  const handleUseCapturedPhoto = async () => {
+    if (!pendingCapture) return;
+
+    setPreviewUrl(pendingCapture);
+    setPendingCapture(null);
+    setIsCameraModalOpen(false);
+
+    try {
+      const response = await fetch(pendingCapture);
+      const blob = await response.blob();
+      const file = new File([blob], `capture-${Date.now()}.png`, {
+        type: blob.type || "image/png",
+      });
+
+      void runAiOcr(file);
+    } catch (error) {
+      console.error("camera capture error", error);
+      setOcrError("Tidak dapat memproses gambar kamera. Coba ulangi.");
+    }
   };
 
   const handleWordClick = (word: string) => {
@@ -325,7 +338,6 @@ export default function CapturePage() {
       return null;
     }
 
-    // gunakan hasil AI
     if (activePanel.type === "topic") {
       switch (activePanel.key) {
         case "origin":
@@ -402,34 +414,37 @@ export default function CapturePage() {
       <div className="flex-1 min-h-0">
         <div className="w-full h-auto lg:h-[calc(100vh-9rem-10rem)] overflow-visible lg:overflow-hidden">
           <div className="flex h-full flex-col gap-4 lg:flex-row lg:gap-6">
+            {/* KIRI: Upload / Kamera */}
             <section className="rounded-3xl border border-[#E4E4ED] p-8 shadow-sm bg-white space-y-6 lg:w-[40%] lg:self-start lg:max-h-full lg:overflow-y-auto">
-              {/* <div className="flex items-center gap-3 text-sm text-[#475569] mb-2">
-                <span className="font-semibold">Mode OCR:</span>
-                <button
-                  type="button"
-                  onClick={() => setOcrEngine("tesseract")}
-                  className={`px-3 py-1 rounded-full border text-xs font-medium ${
-                    ocrEngine === "tesseract"
-                      ? "bg-[#1E293B] text-white border-[#1E293B]"
-                      : "bg-white text-[#1E293B] border-[#D4D4D8]"
-                  }`}
-                >
-                  Tesseract (lokal)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setOcrEngine("ai")}
-                  className={`px-3 py-1 rounded-full border text-xs font-medium ${
-                    ocrEngine === "ai"
-                      ? "bg-[#1BA5A5] text-white border-[#1BA5A5]"
-                      : "bg-white text-[#1E293B] border-[#D4D4D8]"
-                  }`}
-                >
-                  AI (z.ai)
-                </button>
-              </div> */}
-
-              {!previewUrl ? (
+              {isCameraMode ? (
+                <>
+                  {!previewUrl && (
+                    <div className="space-y-4 text-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCameraError(null);
+                          setPendingCapture(null);
+                          setIsCameraModalOpen(true);
+                        }}
+                        className="w-full rounded-2xl bg-[#1E293B] px-4 py-4 text-sm font-semibold text-white hover:bg-[#162033]"
+                      >
+                        Buka Kamera
+                      </button>
+                      <p className="text-xs text-[#6B7280]">
+                        Kamera akan terbuka dalam tampilan besar untuk menangkap
+                        teks dengan jelas.
+                      </p>
+                      {cameraError && (
+                        <p className="text-sm text-[#F97362]">{cameraError}</p>
+                      )}
+                    </div>
+                  )}
+                  {previewSection}
+                </>
+              ) : previewSection ? (
+                previewSection
+              ) : (
                 <div
                   onDragOver={(event) => {
                     event.preventDefault();
@@ -475,39 +490,7 @@ export default function CapturePage() {
                     />
                   </div>
                 </div>
-              ) : (
-                <div className="space-y-4 ">
-                  <div className="flex items-center justify-between gap-4">
-                    <p className="text-sm font-semibold text-[#1E293B]">
-                      Pratinjau Gambar
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPreviewUrl(null);
-                        setOcrText(null);
-                        setCleanedText(null);
-                        setOcrError(null);
-                      }}
-                      className="text-[#F97362] hover:underline text-sm cursor-pointer"
-                    >
-                      Hapus
-                    </button>
-                  </div>
-                  <div className="relative overflow-hidden rounded-xl border border-[#E4E4ED] bg-[#0f172a]/60">
-                    <Image
-                      src={previewUrl}
-                      alt="Preview"
-                      width={800}
-                      height={600}
-                      className="w-full h-auto object-contain bg-black/40"
-                    />
-                  </div>
-                </div>
               )}
-
-              {/* {previewUrl && (
-     )} */}
             </section>
 
             <section className="relative rounded-3xl border border-[#E4E4ED] p-8 shadow-sm bg-white space-y-6 flex-1 lg:w-[60%] overflow-y-auto">
@@ -528,22 +511,7 @@ export default function CapturePage() {
                 <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3 text-[#1E293B]">
                   <Loader2 className="h-8 w-8 animate-spin text-[#1BA5A5]" />
                   <p className="text-sm font-medium">
-                    {ocrEngine === "ai"
-                      ? "Mengenali teks dengan AI…"
-                      : "Mengenali teks …"}
-                  </p>
-                  <p className="text-xs text-[#6B7280]">
-                    {Math.round(ocrProgress * 100)}%
-                  </p>
-                </div>
-              )}
-
-              {!isProcessing && isCleaning && (
-                <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3 text-[#1E293B]">
-                  <Loader2 className="h-8 w-8 animate-spin text-[#1BA5A5]" />
-                  <p className="text-sm font-medium">Merapikan hasil OCR…</p>
-                  <p className="text-xs text-[#6B7280]">
-                    Memperbaiki kata, baris yang terpotong, dan kapitalisasi.
+                    Mengenali teks dengan AI…
                   </p>
                 </div>
               )}
@@ -555,7 +523,7 @@ export default function CapturePage() {
                 </div>
               )}
 
-              {displayText && !isProcessing && !isCleaning && (
+              {displayText && !isProcessing && (
                 <div>
                   {wordsByLine.map((line, lineIndex) => (
                     <p
@@ -567,7 +535,7 @@ export default function CapturePage() {
                           <button
                             type="button"
                             onClick={() => handleWordClick(word)}
-                            className="inline-flex items-center  hover:bg-primary hover:text-white transition text-[#1E293B] cursor-pointer"
+                            className="inline-flex items-center hover:bg-primary hover:text-white transition text-[#1E293B] cursor-pointer"
                           >
                             {word}
                           </button>{" "}
@@ -581,6 +549,22 @@ export default function CapturePage() {
           </div>
         </div>
       </div>
+
+      <WebcamModal
+        isOpen={isCameraModalOpen}
+        onClose={() => setIsCameraModalOpen(false)}
+        webcamRef={webcamRef}
+        pendingCapture={pendingCapture}
+        setPendingCapture={setPendingCapture}
+        cameraError={cameraError}
+        setCameraError={setCameraError}
+        devices={devices}
+        selectedDeviceId={selectedDeviceId}
+        setSelectedDeviceId={setSelectedDeviceId}
+        videoConstraints={videoConstraints}
+        onUseCapturedPhoto={handleUseCapturedPhoto}
+        loadDevices={loadDevices}
+      />
 
       {selectedWord && (
         <WordAnalysisModal

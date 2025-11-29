@@ -1,5 +1,11 @@
+import { callOpenAiVision } from "@/lib/ai/llmClient";
 import { NextRequest, NextResponse } from "next/server";
-import { callZaiVision } from "@/lib/ai/llmClient";
+
+export const runtime = "nodejs";
+
+type OcrImageResult = {
+  text: string;
+};
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,56 +14,67 @@ export async function POST(req: NextRequest) {
 
     if (!file || !(file instanceof Blob)) {
       return NextResponse.json(
-        { error: "File tidak ditemukan" },
+        { error: "Field 'file' wajib diisi dan harus berupa file gambar." },
         { status: 400 }
       );
     }
 
+    const mimeType = file.type || "image/png";
+    if (!mimeType.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "Hanya file gambar yang diperbolehkan." },
+        { status: 400 }
+      );
+    }
+
+    // 🔹 Blob -> base64 data URL
     const arrayBuffer = await file.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString("base64");
-    const contentType = (file as Blob).type || "image/png";
-    const dataUrl = `data:${contentType};base64,${base64}`;
+    const dataUrl = `data:${mimeType};base64,${base64}`;
 
     const prompt = `
-      Kamu adalah asisten OCR untuk teks Bahasa Indonesia, khususnya teks sastra/buku.
+      Kamu adalah asisten OCR untuk aplikasi literasi "Welinas".
 
       Tugasmu:
-      - Ekstrak seluruh teks yang ada di gambar.
-      - Rapikan pemenggalan kata dan baris (gabungkan jika putus di tengah).
-      - Perbaiki huruf yang keliru jika jelas konteksnya.
-      - Pertahankan paragraf dan gaya bahasa sedekat mungkin dengan teks asli.
-      - JANGAN menambah komentar, penjelasan, atau label apa pun.
-      - Hanya kembalikan teks bersih saja.
+      - Membaca teks pada foto halaman buku (Bahasa Indonesia).
+      - Kembalikan hanya TEKS yang terbaca, rapi, layak baca.
+      - Perbolehkan sedikit perbaikan ejaan & pemenggalan baris, tapi:
+        - Jangan meringkas.
+        - Jangan menambah kalimat yang tidak ada di gambar.
+        - Jangan menambahkan komentar atau penjelasan apa pun.
+
+      Output:
+      - Hanya teks final, siap dipakai, tanpa judul tambahan.
     `;
 
-    // const text = await callZaiVision({
-    //   messages: [
-    //     {
-    //       role: "user",
-    //       content: [
-    //         { type: "input_image", image_url: imageDataUrl },
-    //         { type: "text", text: prompt },
-    //       ],
-    //     },
-    //   ],
-    //   temperature: 0.2,
-    //   maxTokens: 2048,
-    // });
-
-    const visionText = await callZaiVision({
-      imageDataUrl: dataUrl,
+    const rawText = await callOpenAiVision({
       prompt,
-      temperature: 0, // biar bener2 "baca", bukan ngarang
-      maxTokens: 2048,
+      imageDataUrl: dataUrl,
     });
 
-    return NextResponse.json({ text: visionText.trim() });
+    const cleaned = rawText.trim();
+    if (!cleaned) {
+      return NextResponse.json(
+        {
+          error:
+            "Model tidak mengembalikan teks apa pun. Pastikan foto halaman buku jelas dan dapat terbaca.",
+        },
+        { status: 422 }
+      );
+    }
+
+    const result: OcrImageResult = {
+      text: cleaned,
+    };
+
+    return NextResponse.json(result);
   } catch (error: unknown) {
-    console.error("OCR vision error:", error);
-    const message =
-      error instanceof Error
-        ? error.message
-        : String(error ?? "Gagal memproses OCR via AI");
-    return NextResponse.json({ error: message }, { status: 500 });
+    const err = error instanceof Error ? error : new Error(String(error));
+    console.error("OCR image error:", err);
+
+    return NextResponse.json(
+      { error: "Gagal membaca teks dari gambar dengan GPT-4o mini." },
+      { status: 500 }
+    );
   }
 }
