@@ -1,21 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useLoginMutation } from "@/hooks/useAuthMutations";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const loginMutation = useLoginMutation();
+  const { data: currentUser } = useCurrentUser();
+
+  useEffect(() => {
+    if (currentUser) {
+      router.replace("/dashboard");
+    }
+  }, [currentUser, router]);
 
   const handleSubmit = (e: React.FormEvent) => {
-    // e.preventDefault();
-    // onLogin?.();
+    e.preventDefault();
+    setError(null);
+    loginMutation.mutate(
+      { email, password },
+      {
+        onSuccess: () => {
+          router.replace("/dashboard");
+        },
+        onError: (err) => {
+          setError(err instanceof Error ? err.message : "Gagal masuk");
+        },
+      },
+    );
   };
 
   return (
@@ -118,6 +140,12 @@ export default function LoginPage() {
                   </button>
                 </div>
 
+                {error && (
+                  <p className="text-sm text-[#F97362] bg-[#FEE2E2] border border-[#FCA5A5] rounded-xl px-4 py-2">
+                    {error}
+                  </p>
+                )}
+
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -137,10 +165,13 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   size="xl"
-                  className="w-full cursor-pointer"
+                  disabled={loginMutation.isPending}
+                  className="w-full cursor-pointer disabled:opacity-50"
                 >
-                  Masuk
-                  <ArrowRight className="w-5 h-5" />
+                  {loginMutation.isPending ? "Memproses..." : "Masuk"}
+                  {!loginMutation.isPending && (
+                    <ArrowRight className="w-5 h-5" />
+                  )}
                 </Button>
               </form>
 

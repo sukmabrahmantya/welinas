@@ -1,22 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronRight, Loader2, X } from "lucide-react";
+import { ChevronRight, Loader2, Star, StarOff, X } from "lucide-react";
+
 import { cn } from "@/lib/utils";
-
-type Topic = {
-  key: string;
-  label: string;
-};
-
-type Detail = {
-  key: string;
-  label: string;
-};
-
-type ActivePanel =
-  | { type: "topic"; key: string }
-  | { type: "detail"; key: string };
+import type {
+  ActivePanel,
+  Detail,
+  Topic,
+} from "@/app/dashboard/capture/constants";
 
 type PanelContent =
   | {
@@ -34,6 +26,9 @@ type PanelContent =
 type Props = {
   selectedWord: string;
   onClose: () => void;
+  onToggleFavorite?: () => void;
+  isFavorited?: boolean;
+  favoriteLoading?: boolean;
 
   activePanel: ActivePanel;
   setActivePanel: (panel: ActivePanel) => void;
@@ -56,6 +51,9 @@ export function WordAnalysisModal({
   panelContent,
   leftTopics,
   rightDetails,
+  onToggleFavorite,
+  isFavorited = false,
+  favoriteLoading = false,
 }: Props) {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -101,13 +99,33 @@ export function WordAnalysisModal({
               {selectedWord}
             </h1>
           </div>
-          <button
-            type="button"
-            onClick={handleClose}
-            className="rounded-full p-2 text-[#6B7280] hover:bg-white/60 transition cursor-pointer"
-          >
-            <X className="h-6 w-6" />
-          </button>
+          <div className="flex items-center gap-2">
+            {onToggleFavorite && (
+              <button
+                type="button"
+                onClick={onToggleFavorite}
+                disabled={favoriteLoading}
+                className={`rounded-full p-2 ${
+                  isFavorited
+                    ? "text-[#F97362] hover:bg-[#FEE2E2]"
+                    : "text-[#6B7280] hover:text-[#F97362] hover:bg-[#FEE2E2]"
+                } transition`}
+              >
+                {isFavorited ? (
+                  <Star className="h-6 w-6 fill-current" />
+                ) : (
+                  <StarOff className="h-6 w-6" />
+                )}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={handleClose}
+              className="rounded-full p-2 text-[#6B7280] hover:bg-white/60 transition cursor-pointer"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 min-h-0">

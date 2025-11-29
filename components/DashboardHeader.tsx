@@ -1,16 +1,63 @@
 "use client";
 
-import { useState } from "react";
-import { DASHBOARD_MENUS } from "@/lib/dashboard/menus";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { LogOut, Menu, User, X } from "lucide-react";
+
+import { DASHBOARD_MENUS } from "@/lib/dashboard/menus";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useLogoutMutation } from "@/hooks/useAuthMutations";
 
 export function DashboardHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const showNav = pathname !== "/dashboard";
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
+  const avatarRef = useRef<HTMLDivElement | null>(null);
+
+  const { data: currentUser } = useCurrentUser();
+  const logoutMutation = useLogoutMutation();
+
+  const initials =
+    currentUser?.name
+      ?.split(" ")
+      .map((part) => part[0]?.toUpperCase())
+      .slice(0, 2)
+      .join("") ?? "U";
+
+  const handleLogout = () => {
+    logoutMutation.mutate(undefined, {
+      onSettled: () => {
+        setAvatarMenuOpen(false);
+        setIsMobileOpen(false);
+        router.replace("/");
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (!avatarMenuOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        avatarRef.current &&
+        !avatarRef.current.contains(event.target as Node)
+      ) {
+        setAvatarMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [avatarMenuOpen]);
+
+  useEffect(() => {
+    setAvatarMenuOpen(false);
+    setIsMobileOpen(false);
+  }, [pathname]);
 
   return (
     <header className="bg-gradient-to-r from-[#020617] via-[#0F172A] to-[#1E293B] text-white shadow-lg">
@@ -64,9 +111,60 @@ export function DashboardHeader() {
               );
             })}
 
-          <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-gradient-to-tr from-[#FACC15] via-[#FB923C] to-[#22C55E] text-[#0F172A] flex items-center justify-center font-semibold text-sm sm:text-base shadow-md">
-            U
-          </div>
+          {currentUser ? (
+            <div className="relative" ref={avatarRef}>
+              <button
+                type="button"
+                onClick={() => setAvatarMenuOpen((prev) => !prev)}
+                className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-brand-gold text-[#0F172A] flex items-center justify-center font-semibold text-sm sm:text-base shadow-md focus:outline-none focus:ring-2 focus:ring-brand-gold/70 focus:ring-offset-2 focus:ring-offset-[#020617] cursor-pointer hover:opacity-80"
+                aria-haspopup="menu"
+                aria-expanded={avatarMenuOpen}
+              >
+                {initials}
+              </button>
+              {avatarMenuOpen && (
+                <div className="absolute right-0 mt-3 w-48 rounded-2xl border border-white/10 bg-[#020617]/95 text-white shadow-2xl backdrop-blur-md z-50 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-white/5">
+                    <p className="text-xs text-white/60">Masuk sebagai</p>
+                    <p className="text-sm font-semibold truncate">
+                      {currentUser.name ?? "Pengguna Welinas"}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAvatarMenuOpen(false);
+                      router.push("/dashboard/profile");
+                    }}
+                    className="cursor-pointer w-full flex items-center gap-2 px-4 py-3 text-left text-sm hover:bg-white/5 transition"
+                  >
+                    <User className="h-4 w-4 text-brand-gold" />
+                    <span>Profil</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    disabled={logoutMutation.isPending}
+                    className="cursor-pointer w-full flex items-center gap-2 px-4 py-3 text-left text-sm text-[#FCA5A5] hover:bg-[#7F1D1D]/40 disabled:opacity-60 disabled:cursor-not-allowed transition"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>
+                      {logoutMutation.isPending ? "Keluar..." : "Keluar"}
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="text-sm font-semibold bg-white/10 px-4 py-2 rounded-full hover:bg-white/20 transition"
+            >
+              Masuk
+            </Link>
+          )}
         </nav>
 
         <button
@@ -118,11 +216,34 @@ export function DashboardHeader() {
                 );
               })}
 
-            <div className="pt-2">
-              <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-[#FACC15] via-[#FB923C] to-[#22C55E] text-[#0F172A] flex items-center justify-center font-semibold text-sm shadow-md">
-                U
+            {currentUser ? (
+              <div className="pt-2 space-y-3">
+                <button
+                  onClick={() => {
+                    setIsMobileOpen(false);
+                    router.push("/dashboard/profile");
+                  }}
+                  className="w-full rounded-xl bg-white/10 px-3 py-2 text-sm font-semibold text-white hover:bg-white/20"
+                >
+                  Profile
+                </button>
+                <button
+                  onClick={handleLogout}
+                  disabled={logoutMutation.isPending}
+                  className="w-full rounded-xl border border-white/20 px-3 py-2 text-sm font-semibold text-white hover:bg-white/10 disabled:opacity-60"
+                >
+                  {logoutMutation.isPending ? "Keluar..." : "Keluar"}
+                </button>
               </div>
-            </div>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setIsMobileOpen(false)}
+                className="block rounded-xl bg-white/10 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-white/20"
+              >
+                Masuk
+              </Link>
+            )}
           </div>
         </div>
       )}

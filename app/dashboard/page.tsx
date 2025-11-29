@@ -83,7 +83,7 @@ export default function DashboardPage() {
                 </Link>
               ))}
 
-              <div className="overflow-hidden rounded-2xl sm:rounded-[28px] shadow-lg border border-brand-gold/35 mt-4 sm:mt-auto bg-brand-gold/5">
+              <div className="overflow-hidden hidden md:block rounded-2xl sm:rounded-[28px] shadow-lg border border-brand-gold/35 mt-4 sm:mt-auto bg-brand-gold/5">
                 <Image
                   src="/images/character-3.png"
                   alt="Ilustrasi pembaca Welinas"
