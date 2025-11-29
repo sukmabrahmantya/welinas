@@ -139,12 +139,12 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
     progress.lastResult === "correct"
       ? {
           text: "Jawaban benar",
-          className: "bg-[#1BA5A5]/10 text-[#0f6b6b]",
+          className: "bg-[#1BA5A5]/20 text-[#0f6b6b]",
         }
       : progress.lastResult === "wrong"
       ? {
           text: "Masih salah, coba lagi",
-          className: "bg-[#F97362]/10 text-[#a23422]",
+          className: "bg-[#F97362]/20 text-[#a23422]",
         }
       : null;
 
@@ -153,15 +153,20 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
       <div className="flex flex-col gap-2">
         <Link
           href="/dashboard/quiz/belajar"
-          className="flex items-center text-sm text-accent-teal hover:text-accent-teal/60 transition w-fit"
+          className="flex items-center text-sm text-brand-gold hover:text-[#b89245] transition w-fit"
         >
           <ChevronLeft />
           Kembali ke daftar quiz
         </Link>
-        <div className="flex items-center justify-between">
-          <h1 className="mt-2 text-3xl font-semibold text-[#1E293B]">
-            {material.title} · Level {quizLevel.level}
-          </h1>
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-2">
+            <span className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-brand-gold/60 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280]">
+              Mode Belajar · Level {quizLevel.level}
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-semibold text-[#1E293B]">
+              {material.title}
+            </h1>
+          </div>
           <div className="flex items-center gap-3">
             <span
               className={`
@@ -181,7 +186,7 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
                 </>
               )}
             </span>
-            <p className="text-sm text-[#475569]">
+            <p className="text-sm text-[#475569] bg-white/70 border border-[#E2D4BB] rounded-full px-3 py-1">
               Soal {progress.currentQuestionIndex + 1} dari {totalQuestions}
             </p>
           </div>
@@ -191,30 +196,35 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
       <div className="flex-1 min-h-0">
         <div className="w-full h-auto lg:h-[calc(100vh-8rem-8rem)] overflow-visible lg:overflow-hidden">
           <div className="flex h-full flex-col gap-4 lg:flex-row lg:gap-6">
-            <aside className=" border-[#E4E4ED] w-full lg:w-72 shrink-0 flex flex-col items-start gap-3">
-              {levelItems.map((level) => (
-                <Link
-                  key={level.href}
-                  href={level.href}
-                  className={`flex w-full items-center justify-between rounded-2xl border p-4 text-md font-semibold transition ${
-                    level.isActive
-                      ? "border-brand-gold bg-brand-gold/10 text-[#1E293B]"
-                      : "border-transparent bg-white/80 text-[#475569] hover:border-brand-gold/50 hover:bg-brand-gold/5"
-                  }`}
-                >
-                  {level.label}
-                  {level.completed ? (
-                    <CheckCircle2 className="h-4 w-4 text-[#1BA5A5]" />
-                  ) : level.isActive ? (
-                    <div className="flex items-center gap-2 text-[#1E293B]">
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                  ) : null}
-                </Link>
-              ))}
+            <aside className="w-full lg:w-72 shrink-0 flex flex-col items-start gap-3">
+              <div className="w-full">
+                <p className="text-xs font-semibold tracking-[0.18em] text-[#6B7280] uppercase mb-2">
+                  Level
+                </p>
+                <div className="flex flex-col gap-2">
+                  {levelItems.map((level) => (
+                    <Link
+                      key={level.href}
+                      href={level.href}
+                      className={`flex w-full items-center justify-between rounded-2xl border p-4 text-md font-semibold text-left transition cursor-pointer shadow-sm transition hover:translate-y-1 hover:shadow-xl ${
+                        level.isActive
+                          ? "bg-[radial-gradient(circle_at_top,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] border-brand-gold"
+                          : "border-transparent bg-brand-gold/5 hover:border-brand-gold"
+                      }`}
+                    >
+                      {level.label}
+                      {level.completed ? (
+                        <CheckCircle2 className="h-4 w-4 text-[#1BA5A5]" />
+                      ) : level.isActive ? (
+                        <ArrowRight className="h-4 w-4 text-[#1E293B]" />
+                      ) : null}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </aside>
 
-            <section className="flex-1 overflow-y-auto bg-white rounded-2xl sm:rounded-[28px] lg:rounded-[32px] border border-[#E4E4ED] p-6 sm:p-8 lg:p-12 flex flex-col gap-4 sm:gap-6">
+            <section className="flex-1 overflow-y-auto rounded-2xl sm:rounded-[28px] lg:rounded-[32px] border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] p-6 sm:p-8 lg:p-12 flex flex-col gap-4 sm:gap-6 shadow-sm">
               <h2 className="text-2xl font-semibold text-[#1E293B]">
                 {currentQuestion.prompt}
               </h2>
@@ -223,7 +233,7 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
                 {currentQuestion.options.map((option) => (
                   <span
                     key={option}
-                    className="rounded-full border border-[#D4D4D8] px-4 py-2 text-sm text-[#1E293B]"
+                    className="rounded-full border border-[#E2D4BB] bg-white/70 px-4 py-2 text-sm text-[#1E293B]"
                   >
                     {option}
                   </span>
@@ -240,7 +250,7 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
                   <button
                     type="button"
                     onClick={handleAutoFill}
-                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#E4E4ED] bg-[#F5F3F0] px-4 py-3 text-sm font-semibold text-[#1E293B] transition hover:border-[#1BA5A5] cursor-pointer"
+                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#E2D4BB] bg-[#F5F3F0] px-4 py-3 text-sm font-semibold text-[#1E293B] transition hover:border-brand-gold cursor-pointer"
                   >
                     <Wand2 className="h-4 w-4" />
                     Tampilkan Jawaban
@@ -248,7 +258,7 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
                   <button
                     type="button"
                     onClick={handleCheck}
-                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#1BA5A5] text-[#1BA5A5] px-4 py-3 text-sm font-semibold transition hover:bg-[#1BA5A5]/10 cursor-pointer"
+                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#1BA5A5] text-[#1BA5A5] bg-white/80 px-4 py-3 text-sm font-semibold transition hover:bg-[#1BA5A5]/10 cursor-pointer"
                   >
                     <CheckCircle2 className="h-4 w-4" />
                     Periksa Jawaban
@@ -260,7 +270,7 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
                     type="button"
                     onClick={handlePreviousQuestion}
                     disabled={isFirstQuestion}
-                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#E4E4ED] bg-white px-4 py-3 text-sm font-semibold text-[#1E293B] transition hover:border-[#1BA5A5] disabled:opacity-40 cursor-pointer"
+                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#E2D4BB] bg-white/80 px-4 py-3 text-sm font-semibold text-[#1E293B] transition hover:border-brand-gold disabled:opacity-40 cursor-pointer"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     Soal Sebelumnya
@@ -279,7 +289,7 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
                         progress.currentQuestionIndex >= totalQuestions - 1) ||
                       (currentLevelCompleted && !nextLevelHref)
                     }
-                    className="flex items-center justify-center gap-2 rounded-2xl border border-transparent bg-[#1E293B] px-4 py-3 text-sm font-semibold text-white transition disabled:opacity-40  cursor-pointer"
+                    className="flex items-center justify-center gap-2 rounded-2xl border border-transparent bg-[#1E293B] px-4 py-3 text-sm font-semibold text-white transition disabled:opacity-40 cursor-pointer"
                   >
                     {currentLevelCompleted
                       ? nextLevelHref

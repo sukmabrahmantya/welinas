@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type Section = {
@@ -35,45 +36,48 @@ export function SastraDetailContent({ sections }: SastraDetailContentProps) {
                 <button
                   key={section.key}
                   onClick={() => setActiveKey(section.key)}
-                  className={`w-full rounded-2xl border border-[#D4D4D8]/60 p-4 text-md font-semibold text-center transition text-left cursor-pointer ${
+                  className={`flex items-center justify-between w-full rounded-2xl border p-4 text-md font-semibold text-left transition cursor-pointer shadow-sm transition hover:translate-y-1 hover:shadow-xl  ${
                     isActive
-                      ? "bg-brand-gold text-primary shadow-lg hover:bg-brand-gold/80"
-                      : "border-transparent bg-white/70 text-[#475569] hover:bg-white hover:text-[#1E293B]"
+                      ? "bg-[radial-gradient(circle_at_right,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] border-brand-gold"
+                      : "border-transparent bg-brand-gold/5 hover:border-brand-gold"
                   }`}
                 >
                   {section.label}
+                  {isActive && (
+                    <ChevronRight className="h-4 w-4 text-brand-gold" />
+                  )}
                 </button>
               );
             })}
           </aside>
 
-          <main className="flex-1 overflow-y-auto bg-white rounded-2xl sm:rounded-[28px] lg:rounded-[32px] border border-[#E4E4ED] p-6 sm:p-8 lg:p-12 flex flex-col gap-4 sm:gap-6">
+          <main className="flex-1 overflow-y-auto rounded-2xl sm:rounded-[28px] lg:rounded-[32px] border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] p-6 sm:p-8 lg:p-12 flex flex-col gap-4 sm:gap-6 shadow-sm">
             <div key={activeSection.key} className="space-y-4 animate-detail">
               <div className="space-y-1">
-                <h2 className="text-2xl font-semibold text-[#1E293B]">
+                <h2 className="text-2xl font-semibold text-[#111827]">
                   {activeSection.label}
                 </h2>
               </div>
 
               {Array.isArray(activeSection.content) ? (
                 activeSection.key === "contoh" ? (
-                  <div className="flex-1 space-y-3 text-sm sm:text-base leading-relaxed font-[var(--literary-font)] text-[#475569]">
+                  <div className="flex-1 space-y-3 text-sm sm:text-base leading-relaxed font-[var(--literary-font)] text-[#374151]">
                     {activeSection.content.map((item, index) => (
                       <p key={item + index}>{item}</p>
                     ))}
                   </div>
                 ) : activeSection.key === "kegunaan" ? (
-                  <ul className="list-disc pl-5 space-y-2 text-sm sm:text-base leading-relaxed text-[#475569]">
+                  <ul className="list-disc pl-5 space-y-2 text-sm sm:text-base leading-relaxed text-[#4B5563]">
                     {activeSection.content.map((item, index) => (
                       <li key={item + index}>{item}</li>
                     ))}
                   </ul>
                 ) : (
-                  <ul className="space-y-3 text-[#475569]">
+                  <ul className="space-y-3 text-[#4B5563]">
                     {activeSection.content.map((item, index) => (
                       <li
                         key={item + index}
-                        className="p-3 text-sm leading-relaxed"
+                        className="p-3 text-sm leading-relaxed rounded-2xl bg-white/60 border border-[#E5E7EB]"
                       >
                         {item}
                       </li>
@@ -81,7 +85,7 @@ export function SastraDetailContent({ sections }: SastraDetailContentProps) {
                   </ul>
                 )
               ) : (
-                <p className="text-base leading-relaxed text-[#475569]">
+                <p className="text-base leading-relaxed text-[#4B5563]">
                   {activeSection.content}
                 </p>
               )}
