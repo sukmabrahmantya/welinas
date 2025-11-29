@@ -8,19 +8,27 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen bg-[#F3E8D9] relative overflow-hidden flex lg:items-center">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-6 w-32 h-32 border-2 border-[#1E293B]/10 rounded-full" />
         <div className="absolute bottom-14 right-12 w-40 h-40 border-2 border-[#1E293B]/10 rounded-full" />
-        <div className="absolute top-1/2 left-1/4 w-24 h-24 border-2 border-[#D9B15F]/20 rounded-full" />
+        <div className="absolute top-1/2 left-1/4 w-24 h-24 border-2 border-brand-gold/20 rounded-full" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-12">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-40 -left-32 h-72 w-[140%] -rotate-6 bg-[#111827]/8" />
+        <div className="absolute -top-24 right-[-60px] h-64 w-64 rounded-full bg-brand-gold/30 blur-3xl" />
+        <div className="absolute bottom-[-80px] -left-20 h-72 w-72 rounded-full bg-[#4F46E5]/20 blur-3xl" />
+        <div className="absolute bottom-[-100px] left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-brand-gold/22 blur-3xl" />
+        <div className="absolute inset-0 opacity-[0.15] [background-image:linear-gradient(to_right,#11182722_1px,transparent_1px),linear-gradient(to_bottom,#11182722_1px,transparent_1px)] [background-size:48px_48px]" />
+      </div>
+
+      <div className="relative w-full max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-8rem)]">
           <div className="space-y-8 lg:space-y-8 order-2 lg:order-1">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-3 px-5 py-2 bg-white rounded-full shadow-sm border border-[#1E293B]/10">
-                <BookOpen className="w-5 h-5 text-[#D9B15F]" />
+                <BookOpen className="w-5 h-5 text-brand-gold" />
                 <span className="text-[#1E293B] text-sm">
                   Platform Literasi Digital
                 </span>
@@ -65,7 +73,7 @@ export default function Home() {
 
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-lg bg-[#1E293B]/5 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-[#D9B15F]" />
+                  <Sparkles className="w-5 h-5 text-brand-gold" />
                 </div>
                 <div>
                   <p className="text-sm text-[#1E293B]">Kurasi Terbaik</p>
@@ -132,8 +140,8 @@ export default function Home() {
           <div className="order-1 lg:order-2">
             <div className="relative">
               <div className="relative w-full max-w-md mx-auto aspect-square">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#1E293B]/5 to-[#D9B15F]/5 rounded-full blur-3xl" />
-                <div className="relative bg-white/50 backdrop-blur-sm rounded-2xl sm:rounded-[28px] p-8 lg:p-12 shadow-xl border border-[#1E293B]/10">
+                <div className="absolute inset-0 border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] rounded-full blur-3xl" />
+                <div className="relative  backdrop-blur-sm rounded-2xl sm:rounded-[28px] p-8 lg:p-12 shadow-xl border border-[#1E293B]/10">
                   <Image
                     src="/images/character.png"
                     alt="Ilustrasi pembaca Welinas"

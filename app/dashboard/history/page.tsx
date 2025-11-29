@@ -45,7 +45,7 @@ export default function HistoryPage() {
   return (
     <div className="flex h-full flex-col gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
       <div className="space-y-3">
-        <p className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-[#D9B15F]/50 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280]">
+        <p className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-brand-gold/50 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280]">
           Riwayat Kata Welinas
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold text-[#1E293B]">
@@ -77,11 +77,11 @@ export default function HistoryPage() {
                 key={item.id}
                 type="button"
                 onClick={() => handleOpenDetail(item)}
-                className="group relative w-full rounded-2xl sm:rounded-[28px] border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(247,234,208,0.95))] p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:border-[#D9B15F] cursor-pointer overflow-hidden"
+                className="group relative w-full rounded-2xl sm:rounded-[28px] border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(247,234,208,0.95))] p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:border-brand-gold cursor-pointer overflow-hidden"
               >
                 <div className="pointer-events-none absolute bottom-[-25%] right-[2%]">
                   {isCamera ? (
-                    <Camera className="h-24 w-24 sm:h-32 sm:w-32 text-[#D9B15F]/10" />
+                    <Camera className="h-24 w-24 sm:h-32 sm:w-32 text-brand-gold/10" />
                   ) : (
                     <UploadCloud className="h-24 w-24 sm:h-32 sm:w-32 text-[#1BA5A5]/10" />
                   )}
@@ -89,7 +89,7 @@ export default function HistoryPage() {
 
                 <div className="relative flex items-center justify-between gap-4">
                   <div className="space-y-1">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-[#D9B15F]/16 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#1E293B] border border-[#D9B15F]/40">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-brand-gold/16 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#1E293B] border border-brand-gold/40">
                       Disimpan dari {sourceLabel}
                     </span>
                     <h3 className="text-2xl font-semibold text-[#1E293B] mt-1">

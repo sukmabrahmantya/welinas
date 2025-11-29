@@ -242,7 +242,7 @@ export default function QuizGamePlayPage({ params }: PageProps) {
       <div className="flex flex-wrap items-center justify-between rounded-2xl sm:rounded-[28px] sm:rounded-[28px] lg:rounded-[32px] border p-6 sm:px-8 lg:px-12 gap-4 sm:gap-6 border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] shadow-sm">
         <div className="flex items-center gap-6">
           <div className="space-y-1">
-            <span className="inline-flex items-center rounded-full bg-[#F3E2B8] border border-[#D9B15F]/70 px-4 py-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#6B7280]">
+            <span className="inline-flex items-center rounded-full bg-[#F3E2B8] border border-brand-gold/70 px-4 py-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#6B7280]">
               Mode Game · Shooting
             </span>
             <p className="text-xl font-semibold text-[#1E293B]">
@@ -318,7 +318,7 @@ export default function QuizGamePlayPage({ params }: PageProps) {
           </div>
         ) : (
           <div className="text-center py-24 space-y-4">
-            <Trophy className="h-14 w-14 mx-auto text-[#D9B15F]" />
+            <Trophy className="h-14 w-14 mx-auto text-brand-gold" />
             <p className="text-2xl font-semibold text-[#1E293B]">
               Semua soal telah dimainkan!
             </p>
@@ -362,7 +362,7 @@ export default function QuizGamePlayPage({ params }: PageProps) {
               <p className="text-2xl font-semibold text-[#1E293B]">HP habis!</p>
               <p className="text-[#6B7280] mt-2">
                 Kamu berhasil mengumpulkan{" "}
-                <span className="font-semibold text-[#D9B15F]">
+                <span className="font-semibold text-brand-gold">
                   {progress.score} poin
                 </span>
                 . Mau coba ulangi?
@@ -393,14 +393,14 @@ export default function QuizGamePlayPage({ params }: PageProps) {
       {showSuccess && (
         <div className="fixed inset-0 z-40 bg-[#0f172a]/80 backdrop-blur-sm flex items-center justify-center p-6">
           <div className="w-full max-w-md rounded-2xl sm:rounded-[28px] bg-white border border-[#E2D4BB] p-8 space-y-6 text-center shadow-2xl">
-            <Trophy className="h-12 w-12 mx-auto text-[#D9B15F]" />
+            <Trophy className="h-12 w-12 mx-auto text-brand-gold" />
             <div>
               <p className="text-2xl font-semibold text-[#1E293B]">
                 Selesai! 🎉
               </p>
               <p className="text-[#6B7280] mt-2">
                 Kamu menuntaskan semua soal dengan{" "}
-                <span className="font-semibold text-[#D9B15F]">
+                <span className="font-semibold text-brand-gold">
                   {progress.score} poin
                 </span>
                 .

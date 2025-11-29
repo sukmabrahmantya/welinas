@@ -27,7 +27,7 @@ export function Button({
     primary:
       "bg-[#1E293B] text-white hover:bg-[#1E293B]/90 active:bg-[#1E293B]/80 shadow-md hover:shadow-lg",
     secondary:
-      "bg-[#D9B15F] text-[#1E293B] hover:bg-[#D9B15F]/90 active:bg-[#D9B15F]/80 shadow-md hover:shadow-lg",
+      "bg-brand-gold text-[#1E293B] hover:bg-brand-gold/90 active:bg-brand-gold/80 shadow-md hover:shadow-lg",
     teal: "bg-[#1BA5A5] text-white hover:bg-[#1BA5A5]/90 active:bg-[#1BA5A5]/80 shadow-md hover:shadow-lg",
     outline:
       "border-2 border-[#1E293B] text-[#1E293B] hover:bg-[#1E293B] hover:text-white active:bg-[#1E293B]/90",

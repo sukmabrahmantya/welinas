@@ -123,14 +123,14 @@ export function WordAnalysisModal({
                   className={`relative flex items-center justify-between w-full h-full rounded-2xl border p-4 text-md font-semibold text-left cursor-pointer shadow-sm transition hover:translate-y-1 hover:shadow-xl ${
                     activePanel.type === "topic" &&
                     activePanel.key === topic.key
-                      ? "bg-[radial-gradient(circle_at_right,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] border-[#D9B15F]"
-                      : "border-transparent bg-[#D9B15F]/5 hover:border-[#D9B15F]"
+                      ? "bg-[radial-gradient(circle_at_right,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] border-brand-gold"
+                      : "border-transparent bg-brand-gold/5 hover:border-brand-gold"
                   }`}
                 >
                   {topic.label}
                   {activePanel.type === "topic" &&
                     activePanel.key === topic.key && (
-                      <div className="bg-white p-1 rounded-full border border-[#D9B15F] pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 transition">
+                      <div className="bg-white p-1 rounded-full border border-brand-gold pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 transition">
                         <ChevronRight className="h-4 w-4 text-brand-gold drop-shadow-sm" />
                       </div>
                     )}
@@ -198,14 +198,14 @@ export function WordAnalysisModal({
                   className={`relative flex items-center justify-between w-full h-full rounded-2xl border p-4 text-md font-semibold text-left cursor-pointer shadow-sm transition hover:translate-y-1 hover:shadow-xl ${
                     activePanel.type === "detail" &&
                     activePanel.key === detail.key
-                      ? "bg-[radial-gradient(circle_at_right,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] border-[#D9B15F]"
-                      : "border-transparent bg-[#D9B15F]/5 hover:border-[#D9B15F]"
+                      ? "bg-[radial-gradient(circle_at_right,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] border-brand-gold"
+                      : "border-transparent bg-brand-gold/5 hover:border-brand-gold"
                   }`}
                 >
                   {detail.label}
                   {activePanel.type === "detail" &&
                     activePanel.key === detail.key && (
-                      <div className="bg-white p-1 rounded-full border border-[#D9B15F] pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 transition">
+                      <div className="bg-white p-1 rounded-full border border-brand-gold pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 transition">
                         <ChevronRight className="h-4 w-4 text-brand-gold drop-shadow-sm scale-x-[-1]" />
                       </div>
                     )}

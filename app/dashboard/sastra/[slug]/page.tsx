@@ -46,7 +46,7 @@ export default function SastraDetailPage({ params }: SastraDetailPageProps) {
       <div className="flex flex-col gap-2">
         <Link
           href="/dashboard/sastra"
-          className="flex items-center text-sm text-[#D9B15F] hover:text-[#b89245] transition w-fit"
+          className="flex items-center text-sm text-brand-gold hover:text-[#b89245] transition w-fit"
         >
           <ChevronLeft />
           Kembali ke daftar materi

@@ -38,8 +38,8 @@ export function SastraDetailContent({ sections }: SastraDetailContentProps) {
                   onClick={() => setActiveKey(section.key)}
                   className={`flex items-center justify-between w-full rounded-2xl border p-4 text-md font-semibold text-left transition cursor-pointer shadow-sm transition hover:translate-y-1 hover:shadow-xl  ${
                     isActive
-                      ? "bg-[radial-gradient(circle_at_right,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] border-[#D9B15F]"
-                      : "border-transparent bg-[#D9B15F]/5 hover:border-[#D9B15F]"
+                      ? "bg-[radial-gradient(circle_at_right,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] border-brand-gold"
+                      : "border-transparent bg-brand-gold/5 hover:border-brand-gold"
                   }`}
                 >
                   {section.label}

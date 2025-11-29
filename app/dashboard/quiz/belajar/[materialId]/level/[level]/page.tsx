@@ -153,14 +153,14 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
       <div className="flex flex-col gap-2">
         <Link
           href="/dashboard/quiz/belajar"
-          className="flex items-center text-sm text-[#D9B15F] hover:text-[#b89245] transition w-fit"
+          className="flex items-center text-sm text-brand-gold hover:text-[#b89245] transition w-fit"
         >
           <ChevronLeft />
           Kembali ke daftar quiz
         </Link>
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
-            <span className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-[#D9B15F]/60 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280]">
+            <span className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-brand-gold/60 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280]">
               Mode Belajar · Level {quizLevel.level}
             </span>
             <h1 className="text-3xl sm:text-4xl font-semibold text-[#1E293B]">
@@ -208,8 +208,8 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
                       href={level.href}
                       className={`flex w-full items-center justify-between rounded-2xl border p-4 text-md font-semibold text-left transition cursor-pointer shadow-sm transition hover:translate-y-1 hover:shadow-xl ${
                         level.isActive
-                          ? "bg-[radial-gradient(circle_at_top,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] border-[#D9B15F]"
-                          : "border-transparent bg-[#D9B15F]/5 hover:border-[#D9B15F]"
+                          ? "bg-[radial-gradient(circle_at_top,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] border-brand-gold"
+                          : "border-transparent bg-brand-gold/5 hover:border-brand-gold"
                       }`}
                     >
                       {level.label}
@@ -250,7 +250,7 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
                   <button
                     type="button"
                     onClick={handleAutoFill}
-                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#E2D4BB] bg-[#F5F3F0] px-4 py-3 text-sm font-semibold text-[#1E293B] transition hover:border-[#D9B15F] cursor-pointer"
+                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#E2D4BB] bg-[#F5F3F0] px-4 py-3 text-sm font-semibold text-[#1E293B] transition hover:border-brand-gold cursor-pointer"
                   >
                     <Wand2 className="h-4 w-4" />
                     Tampilkan Jawaban
@@ -270,7 +270,7 @@ export default function QuizLevelDetailPage({ params }: PageProps) {
                     type="button"
                     onClick={handlePreviousQuestion}
                     disabled={isFirstQuestion}
-                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#E2D4BB] bg-white/80 px-4 py-3 text-sm font-semibold text-[#1E293B] transition hover:border-[#D9B15F] disabled:opacity-40 cursor-pointer"
+                    className="flex items-center justify-center gap-2 rounded-2xl border border-[#E2D4BB] bg-white/80 px-4 py-3 text-sm font-semibold text-[#1E293B] transition hover:border-brand-gold disabled:opacity-40 cursor-pointer"
                   >
                     <ArrowLeft className="h-4 w-4" />
                     Soal Sebelumnya

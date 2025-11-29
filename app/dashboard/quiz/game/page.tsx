@@ -10,7 +10,7 @@ export default function QuizGameListPage() {
   return (
     <div className="flex h-full flex-col gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
       <div className="flex flex-col gap-3 text-center">
-        <span className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-[#D9B15F]/60 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280] mx-auto">
+        <span className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-brand-gold/60 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280] mx-auto">
           Mode Game · Shooting
         </span>
 
@@ -34,7 +34,7 @@ export default function QuizGameListPage() {
           <Link
             key={material.id}
             href={`/dashboard/quiz/game/${material.id}`}
-            className="group rounded-2xl sm:rounded-[28px] border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:border-[#D9B15F]"
+            className="group rounded-2xl sm:rounded-[28px] border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:border-brand-gold"
           >
             <div className="flex items-start gap-4">
               <div className="rounded-2xl sm:rounded-[28px] bg-[#1E293B]/10 p-3 text-[#1E293B]">
@@ -57,11 +57,11 @@ export default function QuizGameListPage() {
               {material.description}
             </p>
 
-            <div className="mt-6 inline-flex items-center gap-2 text-[#D9B15F] font-semibold">
+            <div className="mt-6 inline-flex items-center gap-2 text-brand-gold font-semibold">
               <Zap className="h-4 w-4" />
               <span className="relative">
                 Masuk Arena
-                <span className="absolute inset-x-0 -bottom-0.5 h-[2px] rounded-full bg-[#D9B15F]/60 scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100" />
+                <span className="absolute inset-x-0 -bottom-0.5 h-[2px] rounded-full bg-brand-gold/60 scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100" />
               </span>
             </div>
           </Link>

@@ -76,7 +76,7 @@ export default function DashboardPage() {
                   href={menu.href}
                   className="
                     w-full rounded-2xl py-4 text-lg font-semibold text-center
-                    border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] p-6 shadow-sm transition hover:translate-y-1 hover:shadow-xl hover:border-[#D9B15F]
+                    border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] p-6 shadow-sm transition hover:translate-y-1 hover:shadow-xl hover:border-brand-gold
                   "
                 >
                   {menu.label}

@@ -22,7 +22,7 @@ export default function QuizBelajarListPage() {
   return (
     <div className="flex h-full flex-col gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
       <div className="space-y-3">
-        <p className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-[#D9B15F]/50 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280]">
+        <p className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-brand-gold/50 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280]">
           Mode Belajar
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold text-[#1E293B]">
@@ -41,7 +41,7 @@ export default function QuizBelajarListPage() {
           placeholder="Cari berdasarkan judul"
           value={term}
           onChange={(event) => setTerm(event.target.value)}
-          className="w-full rounded-2xl border border-[#E2D4BB] bg-[#FDF5E7]/90 py-3 pl-12 pr-4 text-base text-[#111827] placeholder:text-[#94A3B8] focus:border-[#D9B15F] focus:ring-2 focus:ring-[#D9B15F]/25 outline-none transition"
+          className="w-full rounded-2xl border border-[#E2D4BB] bg-[#FDF5E7]/90 py-3 pl-12 pr-4 text-base text-[#111827] placeholder:text-[#94A3B8] focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/25 outline-none transition"
         />
       </label>
 
@@ -55,10 +55,10 @@ export default function QuizBelajarListPage() {
             <Link
               key={material.id}
               href={`/dashboard/quiz/belajar/${material.id}/level/1`}
-              className="group rounded-2xl sm:rounded-[28px] border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,252,245,0.96),_rgba(247,234,208,0.96))] p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:border-[#D9B15F]"
+              className="group rounded-2xl sm:rounded-[28px] border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,252,245,0.96),_rgba(247,234,208,0.96))] p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:border-brand-gold"
             >
               <div className="flex items-start gap-4">
-                <div className="rounded-2xl bg-[#D9B15F]/16 text-[#1E293B] p-3">
+                <div className="rounded-2xl bg-brand-gold/16 text-[#1E293B] p-3">
                   <GraduationCap className="h-6 w-6" />
                 </div>
                 <div>
