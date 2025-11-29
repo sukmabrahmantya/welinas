@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Mail, Lock, User, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useRegisterMutation } from "@/hooks/useAuthMutations";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -17,10 +19,37 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
   });
+  const [error, setError] = useState<string | null>(null);
+  const registerMutation = useRegisterMutation();
+  const { data: currentUser } = useCurrentUser();
+
+  useEffect(() => {
+    if (currentUser) {
+      router.replace("/dashboard");
+    }
+  }, [currentUser, router]);
 
   const handleSubmit = (e: React.FormEvent) => {
-    // e.preventDefault();
-    // onSignup?.();
+    e.preventDefault();
+    setError(null);
+    if (formData.password !== formData.confirmPassword) {
+      setError("Konfirmasi password tidak sama.");
+      return;
+    }
+
+    registerMutation.mutate(
+      {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      },
+      {
+        onSuccess: () => router.replace("/dashboard"),
+        onError: (err) => {
+          setError(err instanceof Error ? err.message : "Gagal mendaftar");
+        },
+      }
+    );
   };
 
   const handleChange = (field: string, value: string) => {
@@ -132,7 +161,7 @@ export default function SignupPage() {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
-                      className="absolute right-3 top-[65%] -translate-y-1/2 text-[#6B7280] hover:text-[#1E293B] transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#1E293B] transition-colors"
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="w-5 h-5" />
@@ -143,13 +172,22 @@ export default function SignupPage() {
                   </div>
                 </div>
 
+                {error && (
+                  <p className="text-sm text-[#F97362] bg-[#FEE2E2] border border-[#FCA5A5] rounded-xl px-4 py-2">
+                    {error}
+                  </p>
+                )}
+
                 <Button
                   type="submit"
                   size="xl"
-                  className="w-full cursor-pointer"
+                  disabled={registerMutation.isPending}
+                  className="w-full cursor-pointer disabled:opacity-60"
                 >
-                  Masuk
-                  <ArrowRight className="w-5 h-5" />
+                  {registerMutation.isPending ? "Memproses..." : "Daftar"}
+                  {!registerMutation.isPending && (
+                    <ArrowRight className="w-5 h-5" />
+                  )}
                 </Button>
               </form>
 

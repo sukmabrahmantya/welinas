@@ -239,7 +239,7 @@ export default function QuizGamePlayPage({ params }: PageProps) {
         parallaxOn={false}
       />
 
-      <div className="flex flex-wrap items-center justify-between rounded-2xl sm:rounded-[28px] sm:rounded-[28px] lg:rounded-[32px] border p-6 sm:px-8 lg:px-12 gap-4 sm:gap-6 border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] shadow-sm">
+      <div className="flex flex-wrap items-center justify-between rounded-2xl sm:rounded-[28px] lg:rounded-[32px] border p-6 sm:px-8 lg:px-12 gap-4 sm:gap-6 border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] shadow-sm">
         <div className="flex items-center gap-6">
           <div className="space-y-1">
             <span className="inline-flex items-center rounded-full bg-[#F3E2B8] border border-brand-gold/70 px-4 py-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#6B7280]">
@@ -278,7 +278,7 @@ export default function QuizGamePlayPage({ params }: PageProps) {
         </div>
       </div>
 
-      <section className="rounded-[32px] border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] p-6 sm:p-8 lg:p-12 shadow-xl space-y-6 relative overflow-hidden flex-1">
+      <section className="border rounded-[32px] border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] p-6 sm:p-8 lg:p-12 shadow-xl space-y-6 relative overflow-hidden flex-1">
         <div className="flex items-center justify-between gap-4">
           {currentQuestion && (
             <p className="text-xs sm:text-sm font-semibold text-[#1BA5A5] uppercase tracking-[0.28em]">

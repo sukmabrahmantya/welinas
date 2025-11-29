@@ -1,12 +1,22 @@
 "use client";
 
 import TextType from "@/components/TextType";
-import { ArrowRight, BookOpen, Sparkles, Users } from "lucide-react";
+import { ArrowRight, BookOpen, Loader2, Sparkles, Users } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function Home() {
   const router = useRouter();
+  const { data: currentUser, isLoading } = useCurrentUser();
+
+  const handleCTA = () => {
+    if (currentUser) {
+      router.push("/dashboard");
+    } else {
+      router.push("/login");
+    }
+  };
   return (
     <div className="min-h-screen bg-[#F3E8D9] relative overflow-hidden flex lg:items-center">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -97,11 +107,9 @@ export default function Home() {
             </div>
 
             <div className="pt-4">
-              <div className="flex flex-col md:flex-row gap-3">
-                <button
-                  onClick={() => router.push("/login")}
-                  className="
-                  group inline-flex items-center gap-3
+              <button
+                onClick={handleCTA}
+                className={`group inline-flex items-center gap-3
                   px-8 py-4 cursor-pointer
                   bg-[#1E293B] text-white
                   rounded-2xl
@@ -109,27 +117,28 @@ export default function Home() {
                   hover:bg-[#1E293B]/90 hover:shadow-xl hover:shadow-[#1E293B]/30
                   transition-all duration-300
                   hover:scale-105
-                "
-                >
-                  <span className="text-lg">Mulai Menjelajah</span>
+                  ${
+                    isLoading
+                      ? "opacity-80 cursor-not-allowed"
+                      : "cursor-pointer hover:bg-[#111827] hover:shadow-xl hover:shadow-[#1E293B]/30 hover:scale-105"
+                  }
+                `}
+              >
+                <span className="text-lg">
+                  {isLoading
+                    ? currentUser
+                      ? "Menyiapkan ruang latihannya…"
+                      : "Menyiapkan Welinas untukmu…"
+                    : currentUser
+                    ? "Lanjut jelajahi Welinas"
+                    : "Mulai jelajahi Welinas"}
+                </span>
+                {isLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-                <button
-                  onClick={() => router.push("/dashboard")}
-                  className="
-                  group inline-flex items-center gap-3
-                  px-8 py-4 cursor-pointer
-                  bg-secondary text-white
-                  rounded-2xl
-                  shadow-lg shadow-[#1E293B]/20
-                  hover:bg-[#1E293B]/90 hover:shadow-xl hover:shadow-[#1E293B]/30
-                  transition-all duration-300
-                  hover:scale-105
-                "
-                >
-                  <span className="text-sm">Dashboard (Testing Mode)</span>
-                </button>
-              </div>
+                )}
+              </button>
 
               <p className="text-sm text-[#6B7280] mt-4">
                 Gratis untuk semua pengguna
