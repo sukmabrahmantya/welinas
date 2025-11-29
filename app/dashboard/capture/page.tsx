@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import type Webcam from "react-webcam";
@@ -74,7 +81,7 @@ type ActivePanel =
   | { type: "topic"; key: string }
   | { type: "detail"; key: string };
 
-export default function CapturePage() {
+function CapturePageContent() {
   const searchParams = useSearchParams();
   const modeParam = searchParams.get("mode");
   const isCameraMode = modeParam === "camera";
@@ -582,5 +589,19 @@ export default function CapturePage() {
         />
       )}
     </div>
+  );
+}
+
+export default function CapturePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-screen items-center justify-center text-[#6B7280]">
+          Memuat studio OCR…
+        </div>
+      }
+    >
+      <CapturePageContent />
+    </Suspense>
   );
 }
