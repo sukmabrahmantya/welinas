@@ -74,13 +74,16 @@ export default function DashboardPage() {
                 <Link
                   key={menu.href}
                   href={menu.href}
-                  className="bg-white text-primary w-full rounded-2xl border border-brand-gold py-4 text-lg font-semibold text-center transition shadow-sm hover:bg-brand-gold/80"
+                  className="
+                    w-full rounded-2xl py-4 text-lg font-semibold text-center
+                    border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,252,245,0.98),_rgba(247,234,208,0.98))] p-6 shadow-sm transition hover:translate-y-1 hover:shadow-xl hover:border-[#D9B15F]
+                  "
                 >
                   {menu.label}
                 </Link>
               ))}
 
-              <div className="overflow-hidden rounded-3xl shadow-lg border border-primary/20 mt-4 sm:mt-auto bg-brand-gold/5">
+              <div className="overflow-hidden rounded-2xl sm:rounded-[28px] shadow-lg border border-brand-gold/35 mt-4 sm:mt-auto bg-brand-gold/5">
                 <Image
                   src="/images/character-3.png"
                   alt="Ilustrasi pembaca Welinas"
@@ -92,9 +95,9 @@ export default function DashboardPage() {
               </div>
             </aside>
 
-            <main className="flex-1 bg-white rounded-2xl sm:rounded-[28px] lg:rounded-[32px] border border-[#E4E4ED] p-6 sm:p-8 lg:p-12 flex flex-col gap-4 sm:gap-6 min-h-0">
+            <main className="flex-1 border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] rounded-2xl sm:rounded-[28px] backdrop-blur-[2px] lg:rounded-[32px] p-6 sm:p-8 lg:p-12 flex flex-col gap-4 sm:gap-6 min-h-0">
               <div className="flex items-center justify-between shrink-0">
-                <span className="self-start px-4 py-1.5 rounded-full bg-[#F0F2F8] text-[#1E293B] text-xs sm:text-sm font-medium">
+                <span className="self-start px-4 py-1.5 rounded-full bg-[#F3E2B8] text-[#1E293B] text-xs sm:text-sm font-medium border border-brand-gold/50">
                   Puisi minggu ini
                 </span>
 
@@ -120,7 +123,7 @@ export default function DashboardPage() {
 
               <article className="flex-1 flex flex-col text-center space-y-3 sm:space-y-4 min-h-0">
                 <div className="shrink-0">
-                  <h2 className="font-semibold text-2xl sm:text-3xl lg:text-4xl text-[#1E293B]">
+                  <h2 className="font-semibold text-2xl sm:text-3xl lg:text-4xl text-[#111827]">
                     {poem.title}
                   </h2>
                   <p className="text-xs sm:text-sm text-[#6B7280] italic mt-1 sm:mt-2">
@@ -141,7 +144,7 @@ export default function DashboardPage() {
 
                   {showScrollHint && (
                     <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center md:bottom-2 md:justify-end md:pr-10">
-                      <div className="rounded-full shadow-2xl border border-[#D4D4D8] bg-brand-gold/5 animate-bounce p-2">
+                      <div className="rounded-full shadow-2xl border border-[#D4D4D8] bg-brand-gold/15 animate-bounce p-2">
                         <ChevronsDown className="w-5 h-5 sm:w-6 sm:h-6 text-[#111827] opacity-50" />
                       </div>
                     </div>

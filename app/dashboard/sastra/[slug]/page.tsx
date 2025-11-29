@@ -46,13 +46,13 @@ export default function SastraDetailPage({ params }: SastraDetailPageProps) {
       <div className="flex flex-col gap-2">
         <Link
           href="/dashboard/sastra"
-          className="flex items-center text-sm text-accent-teal hover:text-accent-teal/60 transition w-fit"
+          className="flex items-center text-sm text-[#D9B15F] hover:text-[#b89245] transition w-fit"
         >
           <ChevronLeft />
           Kembali ke daftar materi
         </Link>
         <div>
-          <h1 className="mt-2 text-3xl font-semibold text-[#1E293B]">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-[#1E293B]">
             {materi.title}
           </h1>
         </div>

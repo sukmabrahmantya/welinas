@@ -3,13 +3,21 @@
 import { useQuery } from "@tanstack/react-query";
 import type { WordAnalysis } from "@/types/wordAnalysis";
 
-async function fetchWordAnalysis(word: string): Promise<WordAnalysis> {
+type FetchWordAnalysisParams = {
+  word: string;
+  language?: "id" | "en";
+};
+
+async function fetchWordAnalysis({
+  word,
+  language = "id",
+}: FetchWordAnalysisParams): Promise<WordAnalysis> {
   const res = await fetch("/api/ai/word-analysis", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ word }),
+    body: JSON.stringify({ word, language }),
   });
 
   if (!res.ok) {
@@ -22,23 +30,40 @@ async function fetchWordAnalysis(word: string): Promise<WordAnalysis> {
   return res.json();
 }
 
-export function useWordAnalysis(selectedWord: string | null) {
+type UseWordAnalysisOptions = {
+  selectedWord: string | null;
+  language?: "id" | "en";
+};
+
+export function useWordAnalysis({
+  selectedWord,
+  language = "id",
+}: UseWordAnalysisOptions) {
+  const normalizedWord =
+    selectedWord
+      ?.trim()
+      .toLowerCase()
+      .replace(/[.,!?“”'"‘’]/g, "") ?? "";
+
   return useQuery({
-    queryKey: ["word-analysis", selectedWord],
-    queryFn: () => fetchWordAnalysis(selectedWord as string),
-    enabled: !!selectedWord,
-    staleTime: 1000 * 60 * 5, // 5 menit
+    queryKey: ["word-analysis", normalizedWord, language],
+    enabled: normalizedWord.length > 0,
+    queryFn: () =>
+      fetchWordAnalysis({
+        word: normalizedWord,
+        language,
+      }),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60,
     retry: (failureCount, error) => {
       const message =
         error instanceof Error ? error.message : String(error ?? "");
 
-      // Kalau 429 atau rate limit -> JANGAN retry
       if (message.includes("429") || message.toLowerCase().includes("rate")) {
         return false;
       }
 
-      // Selain itu, boleh retry sekali dua kali (misalnya network putus sebentar)
-      return failureCount < 1; // maks 1x retry
+      return failureCount < 1;
     },
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,

@@ -26,7 +26,7 @@ export default function QuizHomePage() {
   return (
     <div className="flex h-full flex-col gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full lg:h-[calc(100vh-4rem)]">
       <div className="space-y-3 text-center">
-        <p className="text-sm uppercase tracking-widest text-[#6B7280]">
+        <p className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-brand-gold/50 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280]">
           Welinas Quiz Center
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold text-[#1E293B]">
@@ -42,9 +42,20 @@ export default function QuizHomePage() {
         {modes.map((mode) => {
           const Icon = mode.icon;
           const content = (
-            <div className="h-full rounded-3xl border border-[#E4E4ED] p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-xl bg-white">
+            <div
+              className="
+                h-full rounded-2xl sm:rounded-[28px]
+                border border-[#E2D4BB]
+                p-8 shadow-sm
+                bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(247,234,208,0.96))]
+                transition
+                hover:-translate-y-1
+                hover:shadow-xl
+                hover:border-brand-gold
+              "
+            >
               <div className="flex items-center gap-4">
-                <div className="rounded-2xl bg-[#1E293B]/10 p-4 text-[#1E293B]">
+                <div className="rounded-2xl bg-brand-gold/20 p-4 text-[#1E293B] border border-brand-gold/40">
                   <Icon className="h-8 w-8" />
                 </div>
                 <div>
@@ -57,7 +68,7 @@ export default function QuizHomePage() {
               <p className="mt-6 text-[#475569] leading-relaxed">
                 {mode.description}
               </p>
-              <span className="mt-8 inline-flex items-center text-[#1BA5A5] font-semibold">
+              <span className="mt-8 inline-flex items-center text-brand-gold font-semibold">
                 Mulai sekarang →
               </span>
             </div>

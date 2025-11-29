@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { WordAnalysis } from "@/types/wordAnalysis";
 import { callOpenAiChat } from "@/lib/ai/llmClient";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,9 +19,7 @@ export async function POST(req: NextRequest) {
     }
 
     const prompt = `
-      Kamu adalah asisten linguistik bahasa Indonesia untuk platform literasi digital bernama Welinas.
-
-      Analisis kata/frasa berikut secara ringkas, jelas, dan akurat.
+      Kamu adalah asisten linguistik bahasa Indonesia. Analisis kata/frasa berikut secara ringkas, jelas, dan akurat.
       Kata: "${word}"
 
       Bahasa: ${
@@ -43,20 +41,14 @@ export async function POST(req: NextRequest) {
         ],
         "makna": "makna inti/utama kata dalam 1–2 kalimat",
         "penjelasanSingkat": "ringkasan 2–3 kalimat yang mengikat makna dan nuansa penggunaan kata",
-        "ejaKata": "tuliskan ejaan suku kata jika relevan, misalnya: hu·jan bu·lan ju·ni",
-        "sinonim": [
-          "sinonim 1 (jika ada)",
-          "sinonim 2"
-        ],
-        "antonim": [
-          "antonim 1 (jika ada)",
-          "antonim 2"
-        ]
+        "ejaKata": "ejaan suku kata jika relevan, misalnya: hu·jan bu·lan ju·ni",
+        "sinonim": [ "sinonim 1 (jika ada)", "sinonim 2" ],
+        "antonim": [ "antonim 1 (jika ada)", "antonim 2"]
       }
 
       Pastikan:
-      - Semua nilai berupa string (kecuali array).
       - Semua teks dalam Bahasa Indonesia.
+      - Semua nilai berupa string (kecuali array).
       - Jika tidak ada sinonim/antonim yang tepat, gunakan array kosong [].
     `;
 

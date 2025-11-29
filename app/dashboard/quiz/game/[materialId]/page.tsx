@@ -46,9 +46,9 @@ type OptionStyle = {
 
 function createRandomOptionStyles(optionCount: number): OptionStyle[] {
   return Array.from({ length: optionCount }, () => {
-    const vertical = Math.floor(Math.random() * 51) - 25; // -7..7 px
-    const horizontal = Math.floor(Math.random() * 41) - 20; // -5..5 px
-    const rotation = Math.floor(Math.random() * 11) - 5; // -7..7 deg
+    const vertical = Math.floor(Math.random() * 51) - 25;
+    const horizontal = Math.floor(Math.random() * 41) - 20;
+    const rotation = Math.floor(Math.random() * 11) - 5;
 
     return {
       transform: `translate(${horizontal}px, ${vertical}px) rotate(${rotation}deg)`,
@@ -239,12 +239,12 @@ export default function QuizGamePlayPage({ params }: PageProps) {
         parallaxOn={false}
       />
 
-      <div className="flex flex-wrap items-center justify-between rounded-2xl sm:rounded-[28px] lg:rounded-[32px] border border-[#E4E4ED] p-6 sm:px-8 lg:px-12 gap-4 sm:gap-6 bg-white/80">
+      <div className="flex flex-wrap items-center justify-between rounded-2xl sm:rounded-[28px] sm:rounded-[28px] lg:rounded-[32px] border p-6 sm:px-8 lg:px-12 gap-4 sm:gap-6 border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] shadow-sm">
         <div className="flex items-center gap-6">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-[#6B7280]">
+          <div className="space-y-1">
+            <span className="inline-flex items-center rounded-full bg-[#F3E2B8] border border-[#D9B15F]/70 px-4 py-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-[#6B7280]">
               Mode Game · Shooting
-            </p>
+            </span>
             <p className="text-xl font-semibold text-[#1E293B]">
               {material.title}
             </p>
@@ -256,7 +256,7 @@ export default function QuizGamePlayPage({ params }: PageProps) {
                 className={`h-6 w-6 ${
                   index < progress.hp
                     ? "fill-[#F97362] text-[#F97362] animate-heartbeat"
-                    : "text-[#D4D4D8]"
+                    : "text-[#E2D4BB]"
                 }`}
               />
             ))}
@@ -264,13 +264,13 @@ export default function QuizGamePlayPage({ params }: PageProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="rounded-full bg-[#1E293B] px-5 py-2 text-white text-sm font-semibold">
+          <div className="rounded-full bg-[#1E293B] px-5 py-2 text-white text-sm font-semibold shadow-md shadow-black/20">
             {progress.score} Poin
           </div>
           <button
             type="button"
             onClick={exitGame}
-            className="inline-flex items-center gap-2 rounded-2xl border border-[#E4E4ED] bg-white px-4 py-2 text-sm font-semibold text-[#1E293B] transition hover:border-[#F97362] cursor-target"
+            className="inline-flex items-center gap-2 rounded-2xl border border-[#E2D4BB] bg-white/80 px-4 py-2 text-sm font-semibold text-[#1E293B] transition hover:border-[#F97362] hover:bg-[#FFF1ED] cursor-target"
           >
             <LogOut className="h-4 w-4" />
             Keluar
@@ -278,21 +278,21 @@ export default function QuizGamePlayPage({ params }: PageProps) {
         </div>
       </div>
 
-      <section className="rounded-[32px] border border-[#E4E4ED] bg-white p-6 sm:p-8 lg:p-12 shadow-xl space-y-6 relative overflow-hidden flex-1">
+      <section className="rounded-[32px] border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] p-6 sm:p-8 lg:p-12 shadow-xl space-y-6 relative overflow-hidden flex-1">
         <div className="flex items-center justify-between gap-4">
           {currentQuestion && (
-            <p className="text-sm font-semibold text-[#1BA5A5] uppercase tracking-widest">
+            <p className="text-xs sm:text-sm font-semibold text-[#1BA5A5] uppercase tracking-[0.28em]">
               Level {currentQuestion.level}
             </p>
           )}
-          <p className="text-sm uppercase tracking-widest text-[#6B7280]">
+          <p className="text-xs sm:text-sm uppercase tracking-[0.28em] text-[#6B7280]">
             Soal {questionPosition} / {totalQuestions}
           </p>
         </div>
 
         {currentQuestion ? (
           <div className="h-full flex flex-col">
-            <h2 className="text-2xl font-semibold text-[#1E293B]">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-[#1E293B]">
               {currentQuestion.prompt}
             </h2>
 
@@ -307,7 +307,7 @@ export default function QuizGamePlayPage({ params }: PageProps) {
                   key={option}
                   type="button"
                   onClick={() => handleOptionSelect(option)}
-                  className="rounded-3xl border border-[#D4D4D8] bg-[#F8FAFC] px-10 py-4 text-left text-xl font-semibold text-[#1E293B] shadow-sm transition hover:-translate-y-1 hover:shadow-lg cursor-target"
+                  className="rounded-2xl sm:rounded-[28px] border border-[#E2D4BB] bg-white/85 px-10 py-4 text-left text-xl font-semibold text-[#1E293B] shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:bg-[#FFF3D6] cursor-target"
                   style={optionStyles[index]}
                   disabled={!isReady || showGameOver || showSuccess}
                 >
@@ -329,10 +329,10 @@ export default function QuizGamePlayPage({ params }: PageProps) {
       {!isReady && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-[#0f172a]/80 backdrop-blur-sm text-white">
           <div className="text-center space-y-4">
-            <p className="text-sm uppercase tracking-[0.5em] text-[#F97362]">
+            <p className="text-xs sm:text-sm uppercase tracking-[0.5em] text-[#FBBF24]">
               Bersiaplah
             </p>
-            <p className="text-6xl font-bold">
+            <p className="text-6xl sm:text-7xl font-bold drop-shadow-[0_8px_20px_rgba(0,0,0,0.45)]">
               {countdown > 0 ? countdown : "Mulai!"}
             </p>
           </div>
@@ -341,7 +341,7 @@ export default function QuizGamePlayPage({ params }: PageProps) {
 
       {feedback && (
         <div className="fixed inset-0 z-35 bg-[#0f172a]/60 backdrop-blur-sm flex items-center justify-center p-6">
-          <div className="w-full max-w-sm rounded-3xl bg-white px-6 py-8 text-center shadow-2xl">
+          <div className="w-full max-w-sm rounded-2xl sm:rounded-[28px] bg-white border border-[#E2D4BB] px-6 py-8 text-center shadow-2xl">
             {feedback.type === "correct" ? (
               <CheckCircle2 className="h-12 w-12 mx-auto text-[#1BA5A5]" />
             ) : (
@@ -356,13 +356,16 @@ export default function QuizGamePlayPage({ params }: PageProps) {
 
       {showGameOver && (
         <div className="fixed inset-0 z-40 bg-[#0f172a]/80 backdrop-blur-sm flex items-center justify-center p-6">
-          <div className="w-full max-w-md rounded-3xl bg-white p-8 space-y-6 text-center">
+          <div className="w-full max-w-md rounded-2xl sm:rounded-[28px] bg-white border border-[#E2D4BB] p-8 space-y-6 text-center shadow-2xl">
             <ShieldOff className="h-12 w-12 mx-auto text-[#F97362]" />
             <div>
               <p className="text-2xl font-semibold text-[#1E293B]">HP habis!</p>
               <p className="text-[#6B7280] mt-2">
-                Kamu berhasil mengumpulkan {progress.score} poin. Mau coba
-                ulangi?
+                Kamu berhasil mengumpulkan{" "}
+                <span className="font-semibold text-[#D9B15F]">
+                  {progress.score} poin
+                </span>
+                . Mau coba ulangi?
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -389,14 +392,18 @@ export default function QuizGamePlayPage({ params }: PageProps) {
 
       {showSuccess && (
         <div className="fixed inset-0 z-40 bg-[#0f172a]/80 backdrop-blur-sm flex items-center justify-center p-6">
-          <div className="w-full max-w-md rounded-3xl bg-white p-8 space-y-6 text-center">
+          <div className="w-full max-w-md rounded-2xl sm:rounded-[28px] bg-white border border-[#E2D4BB] p-8 space-y-6 text-center shadow-2xl">
             <Trophy className="h-12 w-12 mx-auto text-[#D9B15F]" />
             <div>
               <p className="text-2xl font-semibold text-[#1E293B]">
                 Selesai! 🎉
               </p>
               <p className="text-[#6B7280] mt-2">
-                Kamu menuntaskan semua soal dengan {progress.score} poin.
+                Kamu menuntaskan semua soal dengan{" "}
+                <span className="font-semibold text-[#D9B15F]">
+                  {progress.score} poin
+                </span>
+                .
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">

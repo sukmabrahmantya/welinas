@@ -34,7 +34,7 @@ export default function LoginPage() {
             <div className="relative">
               <div className="relative w-full max-w-md mx-auto aspect-square">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#1E293B]/5 to-[#D9B15F]/5 rounded-full blur-3xl" />
-                <div className="relative bg-white/50 backdrop-blur-sm rounded-3xl p-8 lg:p-12 shadow-xl border border-[#1E293B]/10">
+                <div className="relative bg-white/50 backdrop-blur-sm rounded-2xl sm:rounded-[28px] p-8 lg:p-12 shadow-xl border border-[#1E293B]/10">
                   <Image
                     src="/images/character-2.png"
                     alt="Ilustrasi pembaca Welinas"

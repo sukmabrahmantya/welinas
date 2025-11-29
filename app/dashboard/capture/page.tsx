@@ -164,7 +164,10 @@ export default function CapturePage() {
     data: wordAnalysis,
     isLoading: isWordLoading,
     error: wordError,
-  } = useWordAnalysis(selectedWord);
+  } = useWordAnalysis({
+    selectedWord,
+    language: "id",
+  });
 
   const { mutateAsync: runAiOcrMutation, error: aiOcrError } = useAiOcrImage();
 
@@ -265,10 +268,10 @@ export default function CapturePage() {
           onClick={handleRetake}
           className="text-[#F97362] hover:underline text-sm cursor-pointer"
         >
-          Hapus
+          Ganti Gambar
         </button>
       </div>
-      <div className="relative overflow-hidden rounded-xl border border-[#E4E4ED] bg-[#0f172a]/60">
+      <div className="relative overflow-hidden rounded-xl">
         <Image
           src={previewUrl}
           alt="Preview"
@@ -399,7 +402,7 @@ export default function CapturePage() {
   return (
     <div className="flex h-full flex-col gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full ">
       <div className="space-y-3 text-center">
-        <p className="text-sm uppercase tracking-widest text-[#6B7280]">
+        <p className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-brand-gold/50 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280]">
           OCR Studio
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold text-[#1E293B]">
@@ -414,8 +417,7 @@ export default function CapturePage() {
       <div className="flex-1 min-h-0">
         <div className="w-full h-auto lg:h-[calc(100vh-9rem-10rem)] overflow-visible lg:overflow-hidden">
           <div className="flex h-full flex-col gap-4 lg:flex-row lg:gap-6">
-            {/* KIRI: Upload / Kamera */}
-            <section className="rounded-3xl border border-[#E4E4ED] p-8 shadow-sm bg-white space-y-6 lg:w-[40%] lg:self-start lg:max-h-full lg:overflow-y-auto">
+            <section className="rounded-2xl sm:rounded-[28px] p-8 shadow-sm bg-white space-y-6 lg:w-[40%] lg:self-start lg:max-h-full lg:overflow-y-auto border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(247,234,208,0.96))] shadow-sm">
               {isCameraMode ? (
                 <>
                   {!previewUrl && (
@@ -455,14 +457,14 @@ export default function CapturePage() {
                     setIsDragging(false);
                   }}
                   onDrop={handleDrop}
-                  className={`rounded-3xl border-2 border-dashed px-6 py-10 text-center transition ${
+                  className={`rounded-2xl sm:rounded-[28px] border-2 border-dashed px-6 py-10 text-center transition ${
                     isDragging
-                      ? "border-[#1BA5A5] bg-[#ECFEFF]"
-                      : "border-[#D4D4D8] bg-[#F8FAFC]"
+                      ? "border-brand-gold bg-brand-gold/15"
+                      : "border-[#D4D4D8] transparent"
                   }`}
                 >
                   <div className="flex flex-col items-center gap-4">
-                    <UploadCloud className="h-10 w-10 text-[#1BA5A5]" />
+                    <UploadCloud className="h-10 w-10 text-brand-gold" />
                     <div>
                       <p className="text-lg font-semibold text-[#1E293B]">
                         Tarik & Letakkan file atau
@@ -470,7 +472,7 @@ export default function CapturePage() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="text-[#1BA5A5] font-semibold hover:text-[#128080] cursor-pointer"
+                        className="text-brand-gold font-semibold hover:text-brand-gold/80 cursor-pointer"
                       >
                         pilih dari perangkatmu
                       </button>
@@ -493,10 +495,10 @@ export default function CapturePage() {
               )}
             </section>
 
-            <section className="relative rounded-3xl border border-[#E4E4ED] p-8 shadow-sm bg-white space-y-6 flex-1 lg:w-[60%] overflow-y-auto">
+            <section className="relative rounded-2xl sm:rounded-[28px] backdrop-blur-[2px] lg:rounded-[32px] p-8 shadow-sm border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(243,232,217,0.96))] space-y-6 flex-1 lg:w-[60%] overflow-y-auto">
               {!ocrText && !isProcessing && !ocrError && (
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-4 text-[#6B7280]">
-                  <Sparkles className="h-10 w-10 text-[#1BA5A5]" />
+                  <Sparkles className="h-10 w-10 text-brand-gold" />
                   <p className="text-lg font-semibold text-[#1E293B]">
                     Teks hasil OCR akan muncul di sini
                   </p>
@@ -508,8 +510,8 @@ export default function CapturePage() {
               )}
 
               {isProcessing && (
-                <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3 text-[#1E293B]">
-                  <Loader2 className="h-8 w-8 animate-spin text-[#1BA5A5]" />
+                <div className="absolute inset-0 backdrop-blur-sm flex flex-col items-center justify-center gap-3 text-[#1E293B]">
+                  <Loader2 className="h-8 w-8 animate-spin text-brand-gold" />
                   <p className="text-sm font-medium">
                     Mengenali teks dengan AI…
                   </p>

@@ -22,11 +22,11 @@ export default function SastraPage() {
   return (
     <div className="flex h-full flex-col gap-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 w-full">
       <div className="space-y-3">
-        <p className="text-sm uppercase tracking-widest text-[#6B7280]">
+        <p className="inline-flex items-center justify-center rounded-full bg-[#F3E2B8] border border-[#D9B15F]/50 px-4 py-1 text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#6B7280]">
           Ruang Sastra Welinas
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold text-[#1E293B]">
-          Jelajahi Prosa, Puisi, & Cerpen
+          Jelajahi Prosa, Puisi, &amp; Cerpen
         </h1>
         <p className="text-sm sm:text-base text-[#6B7280] max-w-3xl">
           Temukan penjelasan singkat, makna umum, sejarah, dan kegunaan setiap
@@ -42,13 +42,13 @@ export default function SastraPage() {
           placeholder="Cari materi berdasarkan judul"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          className="w-full rounded-2xl border border-[#D4D4D8] bg-white/80 py-3 pl-12 pr-4 text-base text-[#111827] placeholder:text-[#94A3B8] focus:border-[#1BA5A5] focus:ring-2 focus:ring-[#1BA5A5]/20 outline-none transition"
+          className="w-full rounded-2xl border border-[#E2D4BB] bg-[#FDF5E7]/90 py-3 pl-12 pr-4 text-base text-[#111827] placeholder:text-[#94A3B8] focus:border-[#D9B15F] focus:ring-2 focus:ring-[#D9B15F]/25 outline-none transition"
         />
       </label>
 
       <div className="grid gap-4 grid-cols-1">
         {filteredMateri.length === 0 ? (
-          <div className="col-span-full w-full rounded-3xl border border-dashed border-[#D4D4D8] bg-white/80 p-8 text-center text-[#6B7280]">
+          <div className="col-span-full w-full rounded-2xl sm:rounded-[28px] border border-dashed border-[#E2D4BB] bg-[#FDF5E7]/85 p-8 text-center text-[#6B7280]">
             Tidak ada data yang sesuai.
           </div>
         ) : (
@@ -56,18 +56,18 @@ export default function SastraPage() {
             <Link
               key={materi.id}
               href={`/dashboard/sastra/${materi.id}`}
-              className="group rounded-3xl border border-[#E4E4ED] bg-white/90 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+              className="group relative w-full rounded-2xl sm:rounded-[28px] border border-[#E2D4BB] bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(247,234,208,0.95))] p-6 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:border-[#D9B15F] cursor-pointer overflow-hidden"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <span className="px-3 py-1.5 rounded-full bg-brand-gold/30 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                  <span className="inline-flex items-center rounded-full bg-[#D9B15F]/16 border border-[#D9B15F]/40 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#1E293B]">
                     #{materi.id}
                   </span>
                   <h3 className="text-2xl font-semibold text-[#1E293B] mt-1">
                     {materi.title}
                   </h3>
                 </div>
-                <div className="rounded-full border border-[#E4E4ED] p-2 text-[#1E293B] transition group-hover:bg-[#1E293B] group-hover:text-white">
+                <div className="rounded-full border border-[#E2D4BB] p-2 text-[#1E293B] transition group-hover:bg-[#1E293B] group-hover:text-white">
                   <ChevronRight className="h-4 w-4" />
                 </div>
               </div>
