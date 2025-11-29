@@ -1,36 +1,46 @@
 import { MongoClient, MongoClientOptions } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
 const options: MongoClientOptions = {
   maxPoolSize: 10,
 };
 
-if (!uri) {
-  throw new Error(
-    "Missing environment variable MONGODB_URI. Please set it in your .env file.",
-  );
-}
+let clientPromise: Promise<MongoClient> | null = null;
 
-declare global {
-  // eslint-disable-next-line no-var
-  var _mongoClientPromise: Promise<MongoClient> | undefined;
-}
+async function getClient() {
+  const uri = process.env.MONGODB_URI;
 
-const client = new MongoClient(uri, options);
+  if (!uri) {
+    throw new Error(
+      "Missing environment variable MONGODB_URI. Please set it in your env.",
+    );
+  }
 
-const clientPromise =
-  global._mongoClientPromise ?? client.connect().catch((error) => {
-    console.error("Failed to connect to MongoDB", error);
-    throw error;
-  });
+  if (!uri.startsWith("mongodb://") && !uri.startsWith("mongodb+srv://")) {
+    throw new Error(
+      `Invalid MONGODB_URI scheme. Expected it to start with "mongodb://" or "mongodb+srv://", received "${uri}".`,
+    );
+  }
 
-if (process.env.NODE_ENV !== "production") {
-  global._mongoClientPromise = clientPromise;
+  if (!clientPromise) {
+    const client = new MongoClient(uri, options);
+    clientPromise = client.connect().catch((error) => {
+      clientPromise = null;
+      console.error("Failed to connect to MongoDB", error);
+      throw error;
+    });
+
+    if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-extra-semi
+      (global as any)._mongoClientPromise = clientPromise;
+    }
+  }
+
+  return clientPromise;
 }
 
 export async function getDb(name = process.env.MONGODB_DB ?? "welinas") {
-  const connectedClient = await clientPromise;
-  return connectedClient.db(name);
+  const client = await getClient();
+  return client.db(name);
 }
 
 export type MongoDb = Awaited<ReturnType<typeof getDb>>;
