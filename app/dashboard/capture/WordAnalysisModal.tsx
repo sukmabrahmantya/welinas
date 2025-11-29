@@ -85,7 +85,7 @@ export function WordAnalysisModal({
     >
       <div
         className={cn(
-          "w-full max-w-4xl h-[80vh] max-h-[80vh] rounded-2xl sm:rounded-[28px] p-8 shadow-2xl flex flex-col gap-6 overflow-hidden transform transition-all duration-200 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(247,234,208,0.96))] shadow-2xl border border-[#E2D4BB]",
+          "w-full max-w-4xl h-[80vh] max-h-[80vh] rounded-2xl sm:rounded-[28px] p-6 sm:p-8 flex flex-col gap-6 overflow-hidden transform transition-all duration-200 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(247,234,208,0.96))] shadow-2xl border border-[#E2D4BB]",
           isVisible
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-95 translate-y-2"

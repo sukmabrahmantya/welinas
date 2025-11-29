@@ -93,7 +93,7 @@ export function WebcamModal({
 
   return (
     <div className="fixed inset-0 z-40 bg-[#0f172a]/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl h-[80vh] max-h-[80vh] rounded-[32px] bg-white p-6 sm:p-8 shadow-2xl flex flex-col gap-6">
+      <div className="w-full max-w-4xl h-[80vh] max-h-[80vh] rounded-2xl sm:rounded-[28px] p-6 sm:p-8 flex flex-col gap-6 transform transition-all duration-200 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.96),_rgba(247,234,208,0.96))] shadow-2xl border border-[#E2D4BB]">
         <div className="flex items-start justify-between gap-4 shrink-0">
           <div>
             <p className="text-xs uppercase tracking-[0.4em] text-[#6B7280]">
