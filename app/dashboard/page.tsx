@@ -83,13 +83,13 @@ export default function DashboardPage() {
                 </Link>
               ))}
 
-              <div className="overflow-hidden hidden md:block rounded-2xl sm:rounded-[28px] shadow-lg border border-brand-gold/35 mt-4 sm:mt-auto bg-brand-gold/5">
+              <div className="overflow-hidden hidden md:block rounded-2xl sm:rounded-[28px]  border border-brand-gold/35 mt-4 sm:mt-auto bg-brand-gold/5 ">
                 <Image
-                  src="/images/character-3.png"
+                  src="/images/mountain-bromo.png"
                   alt="Ilustrasi pembaca Welinas"
                   width={540}
                   height={540}
-                  className="mx-auto w-full max-w-xs lg:max-w-xl object-contain"
+                  className="mx-auto w-full max-w-xs lg:max-w-xl object-contain shadow-lg"
                   priority
                 />
               </div>

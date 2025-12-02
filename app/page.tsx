@@ -52,9 +52,8 @@ export default function Home() {
             <div className="space-y-4">
               <TextType
                 text={[
-                  "Platform literasi & sastra untuk semua",
+                  "Platform literasi untuk semua",
                   "Baca, pahami, dan maknai setiap kata",
-                  "Dari pemula sampai pecinta sastra",
                 ]}
                 typingSpeed={75}
                 pauseDuration={1500}
@@ -63,8 +62,8 @@ export default function Home() {
                 className="text-2xl lg:text-3xl text-[#1E293B]/90"
               />
               <p className="text-lg lg:text-xl text-[#6B7280] leading-relaxed max-w-xl">
-                Jelajahi, baca, dan bagikan karya sastra dari berbagai genre.
-                Temukan inspirasi dalam setiap kata.
+                Jelajahi, baca, dan bagikan karya dari berbagai genre. Temukan
+                inspirasi dalam setiap kata.
               </p>
             </div>
 
