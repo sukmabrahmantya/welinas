@@ -13,7 +13,7 @@ export const DASHBOARD_MENUS: DashboardMenu[] = [
     href: "/dashboard/history",
   },
   {
-    label: "Sastra",
-    href: "/dashboard/sastra",
+    label: "Literasi",
+    href: "/dashboard/literasi",
   },
 ];
