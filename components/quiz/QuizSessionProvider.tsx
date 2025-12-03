@@ -271,30 +271,37 @@ export function useQuizGameSession(
     throw new Error("useQuizGameSession must be used within QuizSessionProvider");
   }
 
+  const {
+    initializeGameSession,
+    getGameSession,
+    updateGameSession,
+    resetGameSession,
+  } = context;
+
   const desiredHp = options?.maxHp ?? defaultGameSession.maxHp;
 
   useEffect(() => {
-    context.initializeGameSession(key, {
+    initializeGameSession(key, {
       maxHp: desiredHp,
       hp: desiredHp,
     });
-  }, [context, key, desiredHp]);
+  }, [initializeGameSession, key, desiredHp]);
 
-  const progress = context.getGameSession(key);
+  const progress = getGameSession(key);
 
   return {
     progress,
     updateSession: useCallback(
       (updater: (prev: QuizGameSession) => QuizGameSession) =>
-        context.updateGameSession(key, updater),
-      [context, key],
+        updateGameSession(key, updater),
+      [updateGameSession, key],
     ),
     resetGame: useCallback(() => {
-      context.resetGameSession(key);
-      context.initializeGameSession(key, {
+      resetGameSession(key);
+      initializeGameSession(key, {
         maxHp: desiredHp,
         hp: desiredHp,
       });
-    }, [context, key, desiredHp]),
+    }, [initializeGameSession, resetGameSession, key, desiredHp]),
   };
 }
