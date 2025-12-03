@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useMemo, useRef, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { notFound, useRouter } from "next/navigation";
 import {
   AlertTriangle,
@@ -74,6 +74,13 @@ export default function QuizGamePlayPage({ params }: PageProps) {
   } | null>(null);
   const [showGameOver, setShowGameOver] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [levelCelebration, setLevelCelebration] = useState<
+    { level: number; nextLevel: number } | null
+  >(null);
+  const levelCelebrationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const [gameOverLevel, setGameOverLevel] = useState<number | null>(null);
 
   const questions = useMemo(() => {
     return material.levels.flatMap((level, index) => {
@@ -85,6 +92,27 @@ export default function QuizGamePlayPage({ params }: PageProps) {
       }));
     });
   }, [material, roundSeed]);
+
+  const levelStructure = useMemo(() => {
+    let startIndex = 0;
+    return material.levels.map((level) => {
+      const meta = {
+        level: level.level,
+        startIndex,
+        questionCount: level.questions.length,
+      };
+      startIndex += level.questions.length;
+      return meta;
+    });
+  }, [material]);
+
+  const getNextLevelNumber = useCallback(
+    (levelNumber: number) => {
+      const idx = levelStructure.findIndex((meta) => meta.level === levelNumber);
+      return levelStructure[idx + 1]?.level;
+    },
+    [levelStructure],
+  );
 
   const totalQuestions = questions.length;
   const sessionKey = `game:${material.id}`;
@@ -100,24 +128,103 @@ export default function QuizGamePlayPage({ params }: PageProps) {
       ? null
       : questions[progress.currentQuestionIndex];
 
-  const startCountdown = () => {
+  const startCountdown = useCallback(() => {
     setCountdown(3);
     setIsReady(false);
-  };
+  }, []);
 
-  const handleRestart = () => {
+  const handleAdvance = useCallback(
+    (options?: { resetHp?: boolean }) => {
+      updateSession((prev) => {
+        const nextIndex = Math.min(
+          prev.currentQuestionIndex + 1,
+          totalQuestions,
+        );
+        return {
+          ...prev,
+          currentQuestionIndex: nextIndex,
+          completed: nextIndex >= totalQuestions,
+          hp: options?.resetHp ? prev.maxHp : prev.hp,
+        };
+      });
+    },
+    [totalQuestions, updateSession],
+  );
+
+  const clearLevelTimer = useCallback(() => {
+    if (levelCelebrationTimerRef.current) {
+      clearTimeout(levelCelebrationTimerRef.current);
+      levelCelebrationTimerRef.current = null;
+    }
+  }, []);
+
+  const handleRestart = useCallback(() => {
+    clearLevelTimer();
     resetGame();
     setRoundSeed(Date.now());
     setShowGameOver(false);
     setShowSuccess(false);
     setFeedback(null);
+    setLevelCelebration(null);
+    setGameOverLevel(null);
     startCountdown();
-  };
+  }, [clearLevelTimer, resetGame, startCountdown]);
+
+  const celebrateLevelCompletion = useCallback(
+    (levelNumber: number) => {
+      const upcoming = getNextLevelNumber(levelNumber);
+      if (!upcoming) {
+        handleAdvance({ resetHp: true });
+        return;
+      }
+
+      setLevelCelebration({ level: levelNumber, nextLevel: upcoming });
+      clearLevelTimer();
+      levelCelebrationTimerRef.current = setTimeout(() => {
+        setLevelCelebration(null);
+        handleAdvance({ resetHp: true });
+      }, 2000);
+    },
+    [clearLevelTimer, getNextLevelNumber, handleAdvance],
+  );
+
+  const handleRetryLevel = useCallback(() => {
+    if (!gameOverLevel) {
+      handleRestart();
+      return;
+    }
+
+    const targetMeta = levelStructure.find(
+      (meta) => meta.level === gameOverLevel,
+    );
+    if (!targetMeta) {
+      handleRestart();
+      return;
+    }
+
+    clearLevelTimer();
+    setShowGameOver(false);
+    setFeedback(null);
+    setLevelCelebration(null);
+    setGameOverLevel(null);
+    updateSession((prev) => ({
+      ...prev,
+      currentQuestionIndex: targetMeta.startIndex,
+      completed: false,
+      hp: prev.maxHp,
+    }));
+    startCountdown();
+  }, [clearLevelTimer, gameOverLevel, handleRestart, levelStructure, startCountdown, updateSession]);
 
   useEffect(() => {
     handleRestart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handleRestart]);
+
+  useEffect(() => {
+    return () => {
+      clearLevelTimer();
+    };
+  }, [clearLevelTimer]);
 
   useEffect(() => {
     if (isReady) {
@@ -139,29 +246,33 @@ export default function QuizGamePlayPage({ params }: PageProps) {
 
   useEffect(() => {
     if (progress.completed && totalQuestions > 0) {
+      clearLevelTimer();
+      setLevelCelebration(null);
       setShowSuccess(true);
     }
-  }, [progress.completed, totalQuestions]);
-
-  const handleAdvance = () => {
-    updateSession((prev) => {
-      const nextIndex = Math.min(prev.currentQuestionIndex + 1, totalQuestions);
-      return {
-        ...prev,
-        currentQuestionIndex: nextIndex,
-        completed: nextIndex >= totalQuestions,
-      };
-    });
-  };
+  }, [clearLevelTimer, progress.completed, totalQuestions]);
 
   const handleOptionSelect = (option: string) => {
-    if (!currentQuestion || !isReady || showGameOver || showSuccess) {
+    if (
+      !currentQuestion ||
+      !isReady ||
+      showGameOver ||
+      showSuccess ||
+      levelCelebration
+    ) {
       return;
     }
 
     const isCorrect = option === currentQuestion.correctAnswer;
-    const nextHp = isCorrect ? progress.hp : Math.max(progress.hp - 1, 0);
-    const willGameOver = !isCorrect && nextHp <= 0;
+    const hpAfterAnswer = isCorrect
+      ? progress.hp
+      : Math.max(progress.hp - 1, 0);
+    const willGameOver = !isCorrect && hpAfterAnswer <= 0;
+    const isLastQuestionOverall =
+      progress.currentQuestionIndex === totalQuestions - 1;
+    const nextQuestionLevel = questions[progress.currentQuestionIndex + 1]?.level;
+    const isFinishingLevel =
+      isCorrect && nextQuestionLevel !== currentQuestion.level;
 
     setFeedback({
       type: isCorrect ? "correct" : "wrong",
@@ -171,10 +282,11 @@ export default function QuizGamePlayPage({ params }: PageProps) {
     updateSession((prev) => ({
       ...prev,
       score: isCorrect ? prev.score + 10 : prev.score,
-      hp: nextHp,
+      hp: hpAfterAnswer,
     }));
 
     if (willGameOver) {
+      setGameOverLevel(currentQuestion.level);
       setTimeout(() => {
         setFeedback(null);
         setShowGameOver(true);
@@ -184,15 +296,23 @@ export default function QuizGamePlayPage({ params }: PageProps) {
 
     setTimeout(() => {
       setFeedback(null);
-      handleAdvance();
+      if (isFinishingLevel && !isLastQuestionOverall) {
+        celebrateLevelCompletion(currentQuestion.level);
+      } else {
+        handleAdvance({ resetHp: false });
+      }
     }, 1000);
   };
 
   const hearts = Array.from({ length: progress.maxHp ?? 3 });
 
-  const exitGame = () => {
+  const exitGame = useCallback(() => {
+    setShowGameOver(false);
+    setLevelCelebration(null);
+    setFeedback(null);
+    setGameOverLevel(null);
     router.push("/dashboard/quiz");
-  };
+  }, [router]);
 
   const questionPosition = Math.min(
     progress.currentQuestionIndex + 1,
@@ -202,7 +322,7 @@ export default function QuizGamePlayPage({ params }: PageProps) {
   const optionStyles = useMemo(() => {
     if (!currentQuestion) return [] as OptionStyle[];
     return createRandomOptionStyles(currentQuestion.options.length);
-  }, [currentQuestion?.id, currentQuestion?.options.length]);
+  }, [currentQuestion]);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isWrapped, setIsWrapped] = useState(false);
@@ -309,7 +429,12 @@ export default function QuizGamePlayPage({ params }: PageProps) {
                   onClick={() => handleOptionSelect(option)}
                   className="rounded-2xl sm:rounded-[28px] border border-[#E2D4BB] bg-white/85 px-10 py-4 text-left text-xl font-semibold text-[#1E293B] shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:bg-[#FFF3D6] cursor-target"
                   style={optionStyles[index]}
-                  disabled={!isReady || showGameOver || showSuccess}
+                  disabled={
+                    !isReady ||
+                    showGameOver ||
+                    showSuccess ||
+                    Boolean(levelCelebration)
+                  }
                 >
                   {option}
                 </button>
@@ -339,6 +464,21 @@ export default function QuizGamePlayPage({ params }: PageProps) {
         </div>
       )}
 
+      {levelCelebration && (
+        <div className="fixed inset-0 z-38 bg-[#0f172a]/70 backdrop-blur-sm flex items-center justify-center p-6">
+          <div className="w-full max-w-md rounded-2xl sm:rounded-[28px] bg-white border border-[#E2D4BB] p-8 space-y-4 text-center shadow-2xl">
+            <CheckCircle2 className="h-12 w-12 mx-auto text-[#1BA5A5]" />
+            <p className="text-2xl font-semibold text-[#1E293B]">
+              Level {levelCelebration.level} tuntas!
+            </p>
+            <p className="text-[#6B7280]">
+              Bersiap memasuki Level {levelCelebration.nextLevel}. HP akan
+              dipulihkan penuh.
+            </p>
+          </div>
+        </div>
+      )}
+
       {feedback && (
         <div className="fixed inset-0 z-35 bg-[#0f172a]/60 backdrop-blur-sm flex items-center justify-center p-6">
           <div className="w-full max-w-sm rounded-2xl sm:rounded-[28px] bg-white border border-[#E2D4BB] px-6 py-8 text-center shadow-2xl">
@@ -359,33 +499,44 @@ export default function QuizGamePlayPage({ params }: PageProps) {
           <div className="w-full max-w-md rounded-2xl sm:rounded-[28px] bg-white border border-[#E2D4BB] p-8 space-y-6 text-center shadow-2xl">
             <ShieldOff className="h-12 w-12 mx-auto text-[#F97362]" />
             <div>
-              <p className="text-2xl font-semibold text-[#1E293B]">HP habis!</p>
+              <p className="text-2xl font-semibold text-[#1E293B]">
+                Energi habis di {gameOverLevel ? `Level ${gameOverLevel}` : "level ini"}
+              </p>
               <p className="text-[#6B7280] mt-2">
-                Kamu berhasil mengumpulkan{" "}
+                Kamu sudah mengumpulkan
                 <span className="font-semibold text-brand-gold">
+                  {" "}
                   {progress.score} poin
                 </span>
-                . Mau coba ulangi?
+                . Pilih ingin mengulang level ini atau reset dari awal.
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <button
                 type="button"
-                onClick={handleRestart}
+                onClick={handleRetryLevel}
                 className="flex items-center justify-center gap-2 rounded-2xl border border-[#1E293B] px-4 py-3 text-sm font-semibold text-[#1E293B] hover:bg-[#1E293B] hover:text-white transition cursor-target"
               >
                 <RefreshCcw className="h-4 w-4" />
-                Main Lagi
+                Ulangi Level Ini
               </button>
               <button
                 type="button"
-                onClick={exitGame}
+                onClick={handleRestart}
                 className="flex items-center justify-center gap-2 rounded-2xl border border-transparent bg-[#1E293B] px-4 py-3 text-sm font-semibold text-white cursor-target"
               >
-                <LogOut className="h-4 w-4" />
-                Keluar
+                <RefreshCcw className="h-4 w-4" />
+                Mulai dari Awal
               </button>
             </div>
+            <button
+              type="button"
+              onClick={exitGame}
+              className="w-full flex items-center justify-center gap-2 rounded-2xl border border-transparent bg-[#F5F3F0] px-4 py-3 text-sm font-semibold text-[#1E293B] hover:bg-[#EDE9E3] cursor-target"
+            >
+              <LogOut className="h-4 w-4" />
+              Keluar Arena
+            </button>
           </div>
         </div>
       )}
