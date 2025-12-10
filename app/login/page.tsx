@@ -156,6 +156,7 @@ export default function LoginPage() {
                   </label>
                   <button
                     type="button"
+                    onClick={() => router.push("/forgot-password")}
                     className="text-sm text-brand-gold hover:text-[#1E293B] transition-colors"
                   >
                     Lupa password?

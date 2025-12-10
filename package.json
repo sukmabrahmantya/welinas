@@ -21,18 +21,21 @@
     "mongodb": "^6.10.0",
     "motion": "^12.23.24",
     "next": "15.5.6",
+    "nodemailer": "^6.9.16",
     "openai": "^6.9.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-webcam": "^7.2.0",
     "tailwind-merge": "^3.4.0",
-    "tesseract.js": "^5.1.0"
+    "tesseract.js": "^5.1.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
+    "@types/nodemailer": "^7.0.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
