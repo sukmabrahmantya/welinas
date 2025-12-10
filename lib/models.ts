@@ -9,6 +9,8 @@ export type UserDocument = {
   passwordHash: string;
   bio?: string;
   avatarUrl?: string;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 };
